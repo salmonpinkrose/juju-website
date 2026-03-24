@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyAnswers — Page Spec Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0c0b09; --cream: #faf9f4; --warm-white: #f5f3ec;
+  --gold: #c9a96e; --gold-light: #e8c97a;
+  --ink: #1a1916; --ink-light: #5c5851; --ink-muted: #9c9485;
+  --page-bg: #eee8dc; --rule: #d4cfc4;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--page-bg); font-family:'Cormorant Garamond',serif; color:var(--ink); overflow:hidden; height:100vh; width:100vw; }
+
+.bg {
+  width:100vw; height:100vh; display:flex; align-items:center; justify-content:center;
+  background: radial-gradient(ellipse at 30% 20%,rgba(232,222,206,.9) 0%,rgba(200,190,175,.5) 40%,transparent 70%),
+              radial-gradient(ellipse at 70% 80%,rgba(221,212,196,.8) 0%,rgba(180,172,158,.4) 40%,transparent 70%),
+              linear-gradient(135deg,#ddd6c8 0%,#e8e0d0 50%,#d8d0c0 100%);
+}
+
+/* ONBOARDING */
+#ob { position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
+  background: radial-gradient(ellipse at 30% 20%,rgba(232,222,206,.9) 0%,transparent 70%),
+              radial-gradient(ellipse at 70% 80%,rgba(221,212,196,.8) 0%,transparent 70%),
+              linear-gradient(135deg,#ddd6c8,#e8e0d0,#d8d0c0);
+  transition:opacity .8s; }
+#ob.out { opacity:0; pointer-events:none; }
+.ob-inner { display:flex; flex-direction:column; align-items:center; text-align:center; }
+@keyframes fu { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.ob-ey  { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:24px; opacity:0; animation:fu .8s ease .3s forwards; }
+.ob-div { width:40px; height:1px; background:var(--gold); opacity:.4; margin:0 auto 28px; opacity:0; animation:fu .8s ease .45s forwards; }
+.ob-q   { font-style:italic; font-size:28px; color:var(--ink); margin-bottom:40px; line-height:1.3; opacity:0; animation:fu .8s ease .6s forwards; }
+.ob-in  { background:transparent; border:none; border-bottom:1px solid var(--ink-muted); outline:none; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:26px; color:var(--ink); text-align:center; width:320px; padding:8px 0 12px; letter-spacing:2px; opacity:0; animation:fu .8s ease .9s forwards; }
+.ob-in::placeholder { color:var(--ink-muted); font-style:italic; }
+.ob-hint { margin-top:14px; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--ink-muted); opacity:0; transition:opacity .4s; }
+.ob-hint.on { opacity:1; }
+.ob-btn { margin-top:32px; font-family:'Cormorant Garamond',serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--ink-light); background:none; border:.5px solid var(--rule); padding:10px 28px; cursor:pointer; transition:all .25s; opacity:0; animation:fu .8s ease 1.2s forwards; }
+.ob-btn:hover { background:var(--ink); color:var(--cream); border-color:var(--ink); }
+
+/* COVER */
+.book-wrap { position:relative; }
+.cover {
+  width:340px; height:480px; background:var(--black); border-radius:2px 6px 6px 2px;
+  box-shadow:-8px 0 0 #1a1612,-14px 4px 0 #141210,0 30px 80px rgba(0,0,0,.6),0 10px 30px rgba(0,0,0,.4);
+  position:relative; cursor:pointer; overflow:hidden;
+  transition:transform .4s ease,box-shadow .4s ease;
+  transform:perspective(1000px) rotateY(-3deg);
+}
+.cover:hover { transform:perspective(1000px) rotateY(-1deg) translateY(-4px);
+  box-shadow:-8px 0 0 #1a1612,-14px 4px 0 #141210,0 40px 100px rgba(0,0,0,.7),0 15px 40px rgba(0,0,0,.5); }
+.spine { position:absolute; left:-48px; top:0; width:48px; height:100%; background:linear-gradient(to right,#080706,#141210,#1c1a16); border-radius:2px 0 0 2px; display:flex; align-items:center; justify-content:center; }
+.spine span { font-family:'Cormorant Garamond',serif; font-weight:600; font-size:10px; letter-spacing:3px; color:var(--gold); text-transform:uppercase; writing-mode:vertical-rl; transform:rotate(180deg); opacity:.75; }
+.cborder { position:absolute; inset:16px; border:1px solid rgba(201,169,110,.4); pointer-events:none; }
+.cc { position:absolute; width:20px; height:20px; border-color:var(--gold); border-style:solid; }
+.cc.tr { top:15px; right:15px; border-width:1px 1px 0 0; }
+.cc.bl { bottom:15px; left:15px; border-width:0 0 1px 1px; }
+.cbrand { position:absolute; top:36px; left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:3px; color:var(--gold); text-transform:uppercase; white-space:nowrap; opacity:.9; }
+.ctitle { position:absolute; top:28%; left:50%; transform:translateX(-50%); text-align:center; width:260px; }
+.ctitle .my,.ctitle .ans { font-family:'Cormorant Garamond',serif; font-weight:700; font-style:italic; font-size:46px; color:var(--gold-light); line-height:1.1; display:block; }
+.ctitle .my { letter-spacing:8px; }
+.ctitle .ans { letter-spacing:4px; opacity:.95; }
+.corig { position:absolute; top:calc(28% + 108px); left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:3.5px; color:var(--gold); text-transform:uppercase; opacity:.7; white-space:nowrap; }
+.ctag { position:absolute; top:calc(28% + 132px); left:50%; transform:translateX(-50%); font-family:'Cormorant Garamond',serif; font-style:italic; font-size:13px; color:var(--gold); opacity:.6; text-align:center; white-space:nowrap; line-height:1.6; }
+.cauthor { position:absolute; bottom:100px; left:50%; transform:translateX(-50%); font-family:'Cormorant Garamond',serif; font-style:italic; font-size:13px; color:var(--gold); letter-spacing:2px; white-space:nowrap; }
+.cfoot { position:absolute; bottom:44px; left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:2px; color:var(--gold); text-transform:uppercase; opacity:.45; white-space:nowrap; }
+.octa { position:absolute; bottom:-44px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:20px; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; color:var(--ink-light); letter-spacing:1px; white-space:nowrap; }
+.octa::before,.octa::after { content:''; display:block; width:32px; height:1px; background:var(--ink-muted); }
+.csub { position:absolute; bottom:-72px; left:50%; transform:translateX(-50%); font-style:italic; font-size:12px; color:var(--ink-muted); white-space:nowrap; }
+
+/* OPEN BOOK */
+.ob-book {
+  width:min(960px,96vw); height:min(640px,90vh); display:flex; position:relative;
+  box-shadow:0 30px 90px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.15);
+}
+.pbar { position:absolute; top:0; left:0; right:0; height:2px; background:var(--rule); z-index:20; }
+.pfill { height:100%; background:linear-gradient(to right,var(--gold),var(--gold-light)); transition:width .4s ease; }
+.cls-btn { position:absolute; top:14px; left:14px; font-family:'Cormorant Garamond',serif; font-size:11px; letter-spacing:2px; color:var(--ink-muted); text-transform:uppercase; cursor:pointer; background:none; border:none; opacity:.6; transition:opacity .2s; z-index:30; }
+.cls-btn:hover { opacity:1; }
+.ss { position:absolute; left:50%; top:0; width:20px; height:100%; background:linear-gradient(to right,rgba(0,0,0,.12) 0%,rgba(0,0,0,.04) 40%,rgba(0,0,0,.04) 60%,rgba(0,0,0,.1) 100%); transform:translateX(-50%); z-index:10; pointer-events:none; }
+
+/* PAGES — the critical rules */
+.pl,.pr { width:50%; height:100%; overflow:hidden; position:relative; }
+.pl { background:var(--cream); border-radius:2px 0 0 2px; }
+.pr { background:var(--warm-white); border-radius:0 2px 2px 0; }
+.pb { position:absolute; inset:20px; border:1px solid rgba(201,169,110,.25); pointer-events:none; z-index:1; }
+.pc {
+  position:absolute;
+  top:44px; left:44px; right:44px; bottom:52px;
+  overflow-y:auto; overflow-x:hidden;
+}
+.pc::-webkit-scrollbar { width:3px; }
+.pc::-webkit-scrollbar-thumb { background:rgba(201,169,110,.35); border-radius:2px; }
+
+/* SPREAD */
+.spread { display:none; width:100%; height:100%; }
+.spread.active { display:flex; }
+
+/* NAV */
+.bnav { position:absolute; bottom:0; left:0; right:0; display:flex; justify-content:center; align-items:center; padding:14px; gap:28px; z-index:20; }
+.dots { display:flex; gap:8px; align-items:center; }
+.dot { width:6px; height:6px; border-radius:50%; background:var(--rule); cursor:pointer; transition:all .3s; }
+.dot.on { background:var(--ink); width:20px; border-radius:3px; }
+.nbtn { font-family:'Cormorant Garamond',serif; font-size:20px; color:var(--ink-muted); cursor:pointer; background:none; border:none; padding:4px 12px; transition:color .2s; line-height:1; }
+.nbtn:hover { color:var(--ink); }
+
+/* PAGE TURN */
+@keyframes ptl { from{transform:perspective(2000px) rotateY(0deg)} to{transform:perspective(2000px) rotateY(-180deg)} }
+@keyframes ptr { from{transform:perspective(2000px) rotateY(0deg)} to{transform:perspective(2000px) rotateY(180deg)} }
+
+/* TYPOGRAPHY */
+.rh { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; padding-bottom:10px; border-bottom:.5px solid var(--rule); }
+.rh span { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--ink-muted); }
+.clabel { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+h2 { font-family:'Playfair Display',serif; font-weight:700; font-size:24px; color:var(--ink); line-height:1.2; margin-bottom:16px; }
+.gr { width:48px; height:2px; background:var(--gold); opacity:.6; margin:14px 0; }
+p.bt { font-size:14px; line-height:1.8; color:var(--ink-light); margin-bottom:12px; }
+.dtext { font-style:italic; font-size:14px; line-height:2; color:var(--ink-light); text-align:center; }
+.cq { border-left:2px solid rgba(201,169,110,.4); padding-left:16px; margin:16px 0; font-style:italic; font-size:14px; line-height:1.8; color:var(--ink-light); }
+.cq cite { display:block; font-size:11px; letter-spacing:1.5px; color:var(--ink-muted); font-style:normal; text-transform:uppercase; margin-top:6px; }
+.gl { font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); opacity:.9; }
+
+/* TOC */
+.ti { display:flex; align-items:baseline; justify-content:space-between; padding:9px 0; border-bottom:.5px solid var(--rule); cursor:pointer; transition:opacity .2s; }
+.ti:hover { opacity:.6; }
+.tn { font-size:11px; color:var(--ink-muted); width:24px; flex-shrink:0; }
+.tt { font-family:'Playfair Display',serif; font-size:14px; color:var(--ink); flex:1; padding:0 10px; }
+.tp { font-size:11px; color:var(--ink-muted); }
+.ts { padding-left:34px; padding-bottom:5px; font-size:11px; color:var(--ink-muted); letter-spacing:1px; }
+
+/* METHOD */
+.ms { display:flex; gap:16px; margin-bottom:20px; }
+.mn { font-family:'Playfair Display',serif; font-size:11px; color:var(--ink-muted); width:24px; flex-shrink:0; margin-top:2px; }
+.mt { font-family:'Playfair Display',serif; font-size:15px; color:var(--ink); margin-bottom:5px; }
+.ms p { font-size:13px; line-height:1.7; color:var(--ink-light); }
+
+/* CHAT */
+.cp { height:100%; display:flex; flex-direction:column; gap:8px; }
+.sl { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:3px; }
+.st { font-family:'Playfair Display',serif; font-weight:700; font-size:17px; color:var(--ink); }
+.ss2 { font-style:italic; font-size:12px; color:var(--ink-muted); }
+.cm { flex:1; overflow-y:auto; padding-bottom:6px; }
+.cm::-webkit-scrollbar { width:2px; }
+.cm::-webkit-scrollbar-thumb { background:rgba(201,169,110,.3); }
+.msg { margin-bottom:11px; }
+.msg.ai .mt2 { font-style:italic; font-size:13px; line-height:1.7; color:var(--ink-light); padding-left:10px; border-left:2px solid rgba(201,169,110,.35); }
+.msg.user .mt2 { font-size:13px; line-height:1.7; color:var(--ink); padding:6px 8px; background:rgba(201,169,110,.06); border-radius:2px; }
+.cia { border-top:.5px solid var(--rule); padding-top:8px; display:flex; flex-direction:column; gap:6px; }
+.cia textarea { width:100%; background:transparent; border:none; outline:none; font-family:'Cormorant Garamond',serif; font-size:13px; color:var(--ink); resize:none; line-height:1.6; height:46px; }
+.cia textarea::placeholder { color:var(--ink-muted); font-style:italic; }
+.csend { align-self:flex-end; font-family:'Cormorant Garamond',serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--ink-light); background:none; border:.5px solid var(--rule); padding:5px 14px; cursor:pointer; transition:all .2s; }
+.csend:hover { background:var(--ink); color:var(--cream); border-color:var(--ink); }
+
+/* CHECKIN */
+.ctab { position:absolute; right:-1px; top:80px; background:var(--ink); color:var(--cream); font-size:9px; letter-spacing:2.5px; text-transform:uppercase; writing-mode:vertical-rl; padding:14px 7px; }
+.clb { font-size:9px; letter-spacing:2.5px; text-transform:uppercase; color:var(--ink-muted); margin-bottom:6px; }
+.copts { display:flex; gap:14px; }
+.co { font-size:13px; color:var(--ink-light); cursor:pointer; padding:2px 0; border-bottom:1px solid transparent; transition:all .2s; }
+.co:hover,.co.on { border-bottom-color:var(--ink); color:var(--ink); }
+.clines { display:flex; flex-direction:column; gap:20px; margin-top:6px; }
+.cline { height:1px; background:var(--rule); }
+.tr2 { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:.5px solid var(--rule); }
+.tk { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--ink-muted); }
+.tvs { display:flex; gap:8px; align-items:center; }
+.tv { font-size:12px; color:var(--ink-light); cursor:pointer; transition:color .2s; }
+.tv:hover,.tv.on { color:var(--ink); border-bottom:1px solid var(--ink); }
+.tor { font-size:11px; color:var(--ink-muted); }
+.gc { width:100%; height:80px; position:relative; margin-top:6px; }
+.gc::before { content:''; position:absolute; left:0; bottom:0; width:1px; height:100%; background:var(--ink-muted); opacity:.4; }
+.gc::after  { content:''; position:absolute; left:0; bottom:0; width:100%; height:1px; background:var(--ink-muted); opacity:.4; }
+
+/* AUTOBIOGRAPHY */
+.ae { margin-bottom:16px; padding-bottom:16px; border-bottom:.5px solid var(--rule); }
+.ad { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:4px; }
+.ach { font-family:'Playfair Display',serif; font-size:15px; color:var(--ink); margin-bottom:8px; }
+.ap { font-size:13px; line-height:1.85; color:var(--ink-light); font-style:italic; }
+
+/* LOCKED */
+.lock { position:absolute; inset:44px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; }
+.ltext { font-style:italic; font-size:14px; color:var(--ink-muted); text-align:center; line-height:1.6; }
+
+/* SPEC NOTE */
+.sn { position:absolute; bottom:10px; left:44px; right:44px; font-size:9px; letter-spacing:1px; color:var(--gold); opacity:.5; border-top:.5px solid rgba(201,169,110,.15); padding-top:6px; text-transform:uppercase; }
+</style>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div id="ob">
+  <div class="ob-inner">
+    <div class="ob-ey">MyAnswers</div>
+    <div class="ob-div"></div>
+    <div class="ob-q">Who is this book for?</div>
+    <input class="ob-in" id="nameInput" type="text" placeholder="Your name" autocomplete="off" oninput="ni()" onkeydown="nk(event)"/>
+    <div class="ob-hint" id="obHint">Press Enter to begin</div>
+    <button class="ob-btn" onclick="sn2()">Open my book →</button>
+  </div>
+</div>
+
+<!-- COVER -->
+<div class="bg" id="coverState" style="display:none">
+  <div class="book-wrap">
+    <div class="cover" onclick="openBook()">
+      <div class="spine"><span>My Answers</span></div>
+      <div class="cborder"></div>
+      <div class="cc tr"></div><div class="cc bl"></div>
+      <span class="cbrand">MyAnswers</span>
+      <div class="ctitle"><span class="my">MY</span><span class="ans">ANSWERS</span></div>
+      <span class="corig">L'Original</span>
+      <div class="ctag">The book that holds the answers<br>you've been looking for</div>
+      <div class="cauthor" id="coverAuthor"></div>
+      <span class="cfoot">Solve the mystery of your mind</span>
+    </div>
+    <div class="octa">Open the book</div>
+    <div class="csub">Discover your MBTI type through honest conversation, not checkbox surveys.</div>
+  </div>
+</div>
+
+<!-- OPEN BOOK -->
+<div class="bg" id="bookState" style="display:none">
+  <div class="ob-book" id="OB">
+    <div class="pbar"><div class="pfill" id="pf" style="width:11%"></div></div>
+    <button class="cls-btn" id="topBtn" onclick="topBtnClick()">← Close</button>
+    <div class="ss"></div>
+
+    <!-- S1: pp1-2 -->
+    <div class="spread active" id="s1">
+      <div class="pl"><div class="pb"></div>
+        <div class="pc" style="display:flex;flex-direction:column;justify-content:center;align-items:center;">
+          <div class="dtext" style="max-width:230px;">For every person who has ever wondered<br>why they do the things they do,<br>felt misunderstood by those closest to them,<br>or sensed a pattern in their own behaviour<br>they couldn't quite name.</div>
+          <div style="width:32px;height:1px;background:var(--gold);opacity:.4;margin:18px auto;"></div>
+          <div class="gl" style="font-style:italic;text-align:center;">This book is for you.</div>
+        </div>
+        <div class="sn">pp. 1–2 · Dedication & Title spread</div>
+      </div>
+      <div class="pr"><div class="pb"></div>
+        <div class="pc" style="display:flex;flex-direction:column;justify-content:center;">
+          <div class="gl" style="margin-bottom:8px;">MyAnswers</div>
+          <div style="font-family:'Playfair Display',serif;font-weight:900;font-size:48px;color:var(--ink);line-height:1;letter-spacing:-.5px;margin-bottom:6px;">MY<br>ANSWERS</div>
+          <div class="gr"></div>
+          <p class="bt" style="font-style:italic;max-width:260px;">A conversational guide to understanding your personality, your patterns, and the quiet logic behind the way you move through the world.</p>
+          <div style="margin-top:18px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-muted);">Based on the Myers-Briggs Type Indicator</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S2: pp3-4 -->
+    <div class="spread" id="s2">
+      <div class="pl"><div class="pb"></div>
+        <div class="pc">
+          <div class="rh"><span>My Answers</span><span>3</span></div>
+          <h2>What this book holds</h2>
+          <p class="bt">You have spent years collecting evidence about yourself — the way you recharge after a long day, the decisions that come easily and those that paralyse you, the relationships that feel effortless and those that quietly exhaust you.</p>
+          <p class="bt">These are not flaws. They are clues. And this book is a place to read them.</p>
+          <p class="bt">Through conversation — honest, open-ended, unhurried — you will begin to see the pattern. Not a checkbox. Not a scale. Just your own words, read carefully.</p>
+        </div>
+      </div>
+      <div class="pr"><div class="pb"></div>
+        <div class="pc">
+          <div class="rh"><span>Contents</span><span>4</span></div>
+          <h2 style="margin-bottom:18px;">Chapters</h2>
+
+          <div class="ti" onclick="goTo(3)"><span class="tn">—</span><span class="tt">The Method</span><span class="tp">5</span></div>
+          <div class="ts">How the conversation works</div>
+
+          <div class="ti" onclick="goTo(4)"><span class="tn">8</span><span class="tt">The Conversation</span><span class="tp">7</span></div>
+          <div class="ts">Always on page 8 · Return here each time</div>
+
+          <div class="ti" onclick="goTo(5)"><span class="tn">I</span><span class="tt">Your Portrait</span><span class="tp">9</span></div>
+          <div class="ts">Your type · traits · first written portrait</div>
+
+          <div class="ti" onclick="goTo(6)"><span class="tn">—</span><span class="tt">Check In</span><span class="tp">11</span></div>
+          <div class="ts">Return here · mood · habits · growth chart</div>
+
+          <div class="ti" onclick="goTo(7)" style="opacity:.45;"><span class="tn">II</span><span class="tt">On Relationships</span><span class="tp">13</span></div>
+          <div class="ts" style="opacity:.45;">Unlocks after first Check In</div>
+
+          <div class="ti" style="opacity:.25;cursor:default;"><span class="tn">III</span><span class="tt">On Work</span><span class="tp">—</span></div>
+          <div class="ti" style="opacity:.25;cursor:default;"><span class="tn">IV</span><span class="tt">On Fear</span><span class="tp">—</span></div>
+          <div class="ti" style="opacity:.25;cursor:default;"><span class="tn">V</span><span class="tt">On Change</span><span class="tp">—</span></div>
+          <div class="ti" style="opacity:.25;cursor:default;"><span class="tn">VI</span><span class="tt">On What You Want</span><span class="tp">—</span></div>
+
+          <div class="ti" onclick="goTo(8)"><span class="tn">—</span><span class="tt">Your Autobiography</span><span class="tp">15</span></div>
+          <div class="ts">Grows with every session</div>
+
+          <div class="ti" onclick="goTo(9)" style="opacity:.45;"><span class="tn">—</span><span class="tt">The Complete Portrait</span><span class="tp">17</span></div>
+          <div class="ts" style="opacity:.45;">Unlocks after 5 sessions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3: pp5-6 -->
+    <div class="spread" id="s3">
+      <div class="pl"><div class="pb"></div>
+        <div class="pc">
+          <div class="rh"><span>The Method</span><span>5</span></div>
+          <h2>How you'll find your answers</h2>
+          <div class="ms"><div class="mn">01</div><div><div class="mt">Speak freely</div><p>Write anything on your mind. A thought, a feeling, a fragment. There are no right answers — only honest ones.</p></div></div>
+          <div class="ms"><div class="mn">02</div><div><div class="mt">Be led gently</div><p>The book asks questions in return — curious, unhurried, following your thread. Like a thoughtful friend.</p></div></div>
+          <div class="ms"><div class="mn">03</div><div><div class="mt">Receive your portrait</div><p>After 6–8 exchanges the book composes a chapter — your MBTI type, traits, and a written portrait of who you are.</p></div></div>
+          <div class="ms"><div class="mn">04</div><div><div class="mt">Return and grow</div><p>Each time you come back, the book knows you better. Over time it becomes your autobiography.</p></div></div>
+        </div>
+      </div>
+      <div class="pr"><div class="pb"></div>
+        <div class="pc">
+          <div class="rh"><span>The Method</span><span>6</span></div>
+          <h2>Why conversation works</h2>
+          <p class="bt">Traditional tests ask you to choose between someone else's words. Agree or disagree. The result is a label applied to a simplified version of you.</p>
+          <p class="bt">But language carries personality. The words you reach for, the stories you tell, the things you choose to mention — all of these are data your personality has been generating your whole life.</p>
+          <p class="bt">The conversation in this book draws on Person-Centred and Narrative Therapy — following your words, not redirecting them. The AI behaves like a therapist: curious, non-directive, always following your thread.</p>
+          <div class="cq" style="margin-top:14px;">The most honest answers are the ones you didn't know you had.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S4: pp7-8 The Conversation -->
+    <div class="spread" id="s4">
+      <div class="pl"><div class="pb"></div>
+        <div class="pc">
+          <div class="rh"><span>Chapter One</span><span>7</span></div>
+          <div class="clabel">Chapter One</div>
+          <h2>On Who You Are</h2>
+          <div class="gr"></div>
+          <p class="bt">This is where your story begins. There is no starting question — only a blank page, and whatever is on your mind right now.</p>
+          <p class="bt">Write as you would write in a diary. Write as you would speak to a trusted friend. Write whatever comes.</p>
+          <p class="bt">The book will follow wherever you lead.</p>
+          <div class="cq" style="margin-top:14px;">"Know thyself, and you shall know all the mysteries of the gods."<cite>Ancient Oracle, Delphi</cite></div>
+          <div style="margin-top:14px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-muted);">Free · No account needed · ~15 minutes</div>
+        </div>
+      </div>
+      <div class="pr"><div class="pb"></div>
+        <div class="pc" style="top:28px;left:32px;right:32px;bottom:48px;">
+          <div class="cp">
+            <div>
+              <div class="sl">Page 8 · Always here</div>
+              <div class="st">The Conversation</div>
+              <div class="ss2">Return here each time you want to talk</div>
+            </div>
+            <div class="cm" id="chatMessages">
+              <div class="msg ai"><div class="mt2">Begin wherever you are. What's been on your mind lately?</div></div>
+              <div class="msg user"><div class="mt2">I've been feeling a bit lost lately. Like I'm doing everything right but something still feels off.</div></div>
+              <div class="msg ai"><div class="mt2">That feeling of doing everything right but still feeling off — can you say more about what "right" looks like for you? Whose version of right is it?</div></div>
+              <div class="msg user"><div class="mt2">I think it's my parents' version, honestly. I followed the path they wanted.</div></div>
+              <div class="msg ai"><div class="mt2">And when you picture your own path — the one that's entirely yours — what do you see? Even vaguely.</div></div>
+            </div>
+            <div class="cia">
+              <textarea id="chatInput" placeholder="Write whatever is on your mind..." onkeydown="ck(event)"></textarea>
+              <button class="csend" onclick="sm()">Send →</button>
+            </div>
+          </div>
+        </div>
+        <div class="sn">AI uses contextual chaining — Person-Centred + Narrative Therapy. Follows user's own words.</div>
+      </div>
+    </div>
+
+    <!-- S5: pp9-10 Portrait -->
+    <div class="spread" id="s5">
+      <div class="pl"><div class="pb"></div>
+        <div class="pc">
+          <div class="rh"><span>Your Portrait</span><span>9</span></div>
+          <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Based on your first conversation</div>
+          <div style="font-style:italic;font-size:14px;color:var(--ink-light);line-height:1.6;margin-bottom:12px;">You sound like an <strong style="font-style:normal;color:var(--ink);">INFJ.</strong> Here is what that tends to look like.</div>
+          <div style="display:flex;align-items:flex-end;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:.5px solid var(--rule);">
+            <div style="font-family:'Playfair Display',serif;font-weight:900;font-size:46px;color:var(--gold);letter-spacing:2px;line-height:1;">INFJ</div>
+            <div style="padding-bottom:4px;">
+              <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-muted);">The Advocate</div>
+              <div style="font-size:11px;color:var(--ink-muted);margin-top:2px;">Rarest type · ~1.5% of people</div>
+            </div>
+          </div>
+          <div style="font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink-muted);margin-bottom:9px;">Your Trait Spectrum</div>
+          <div style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);font-weight:600;">Introverted</span><span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-muted);">Extroverted</span></div>
+            <div style="height:3px;background:var(--rule);border-radius:2px;"><div style="width:74%;height:100%;background:linear-gradient(to right,var(--gold),var(--gold-light));border-radius:2px;"></div></div>
+            <div style="font-style:italic;font-size:11px;color:var(--ink-muted);margin-top:2px;">Recharges alone. Deep inner world.</div>
+          </div>
+          <div style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);font-weight:600;">Intuitive</span><span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-muted);">Sensing</span></div>
+            <div style="height:3px;background:var(--rule);border-radius:2px;"><div style="width:82%;height:100%;background:linear-gradient(to right,var(--gold),var(--gold-light));border-radius:2px;"></div></div>
+            <div style="font-style:italic;font-size:11px;color:var(--ink-muted);margin-top:2px;">Sees patterns. Thinks in meaning.</div>
+          </div>
+          <div style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);font-weight:600;">Feeling</span><span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-muted);">Thinking</span></div>
+            <div style="height:3px;background:var(--rule);border-radius:2px;"><div style="width:66%;height:100%;background:linear-gradient(to right,var(--gold),var(--gold-light));border-radius:2px;"></div></div>
+            <div style="font-style:italic;font-size:11px;color:var(--ink-muted);margin-top:2px;">Decides with values. Deeply empathic.</div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);font-weight:600;">Judging</span><span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-muted);">Perceiving</span></div>
+            <div style="height:3px;background:var(--rule);border-radius:2px;"><div style="width:58%;height:100%;background:linear-gradient(to right,var(--gold),var(--gold-light));border-radius:2px;"></div></div>
+            <div style="font-style:italic;font-size:11px;color:var(--ink-muted);margin-top:2px;">Prefers structure. Plans with purpose.</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding-top:10px;border-top:.5px solid var(--rule);">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-muted);">Confidence</div>
+            <div style="flex:1;height:2px;background:var(--rule);border-radius:2px;"><div style="width:87%;height:100%;background:var(--gold);opacity:.7;border-radius:2px;"></div></div>
+            <div style="font-family:'Playfair Display',serif;font-size:14px;color:var(--gold);">87%</div>
+          </div>
+          <div style="font-style:italic;font-size:11px;color:var(--ink-muted);margin-top:5px;">Write more to improve accuracy.</div>
+        </div>
+      </div>
+      <div class="pr"><div class="pb"></div>
+        <div class="pc">
+          <div class="rh"><span>Your Portrait</span><span>10</span></div>
+          <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">What INFJs are like</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;">
+            <span style="font-size:12px;color:var(--ink-light);border:.5px solid var(--rule);padding:3px 9px;border-radius:20px;">Deeply empathic</span>
+            <span style="font-size:12px;color:var(--ink-light);border:.5px solid var(--rule);padding:3px 9px;border-radius:20px;">Visionary</span>
+            <span style="font-size:12px;color:var(--ink-light);border:.5px solid var(--rule);padding:3px 9px;border-radius:20px;">Private</span>
+            <span style="font-size:12px;color:var(--ink-light);border:.5px solid var(--rule);padding:3px 9px;border-radius:20px;">Principled</span>
+            <span style="font-size:12px;color:var(--ink-light);border:.5px solid var(--rule);padding:3px 9px;border-radius:20px;">Complex inner world</span>
+            <span style="font-size:12px;color:var(--ink-light);border:.5px solid var(--rule);padding:3px 9px;border-radius:20px;">Idealistic</span>
+            <span style="font-size:12px;color:var(--ink-light);border:.5px solid var(--rule);padding:3px 9px;border-radius:20px;">Hard to know</span>
+          </div>
+          <div style="margin-bottom:11px;padding-bottom:11px;border-bottom:.5px solid var(--rule);">
+            <div style="font-family:'Playfair Display',serif;font-size:13px;color:var(--ink);margin-bottom:4px;">How they think</div>
+            <div style="font-size:13px;line-height:1.7;color:var(--ink-light);">INFJs live inside a rich internal world of patterns and meaning. They see connections others miss and tend to understand how things will unfold before they do.</div>
+          </div>
+          <div style="margin-bottom:11px;padding-bottom:11px;border-bottom:.5px solid var(--rule);">
+            <div style="font-family:'Playfair Display',serif;font-size:13px;color:var(--ink);margin-bottom:4px;">How they feel</div>
+            <div style="font-size:13px;line-height:1.7;color:var(--ink-light);">They absorb the emotions of people around them like a sponge. Deeply caring but intensely private — they give a lot and protect their inner world fiercely.</div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <div style="font-family:'Playfair Display',serif;font-size:13px;color:var(--ink);margin-bottom:4px;">What drives them</div>
+            <div style="font-size:13px;line-height:1.7;color:var(--ink-light);">A need for meaning above all else. INFJs can endure almost anything if they understand why. Drawn to work that serves something larger than themselves.</div>
+          </div>
+          <div style="background:rgba(201,169,110,.06);border:.5px solid rgba(201,169,110,.25);border-radius:2px;padding:12px;">
+            <div style="font-style:italic;font-size:13px;color:var(--ink-light);line-height:1.7;">This is what INFJs are generally like. But the more you write, the more this book will understand <em>you specifically</em> — not the type, but the person inside it.</div>
+            <div style="margin-top:8px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);">Return to page 8 to continue →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S6: pp11-12 Check-In -->
+    <div class="spread" id="s6">
+      <div class="pl"><div class="pb"></div>
+        <div class="pc">
+          <div class="rh"><span>Check In</span><span>11</span></div>
+          <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink-muted);margin-bottom:4px;">Today's Date</div>
+          <div style="border-bottom:.5px solid var(--rule);padding-bottom:12px;margin-bottom:14px;font-style:italic;font-size:13px;color:var(--ink-muted);">March 23, 2025</div>
+          <div style="margin-bottom:14px;"><div class="clb">How do you feel about who you're becoming?</div><div class="copts"><span class="co" onclick="tog(this)">Concerned</span><span class="co on" onclick="tog(this)">Content</span><span class="co" onclick="tog(this)">Excited</span></div></div>
+          <div style="margin-bottom:14px;">
+            <div class="clb">Things that helped me this week</div>
+            <textarea id="ciHelped" placeholder="Write freely, AI will beautify it..." style="width:100%;background:transparent;border:none;border-bottom:.5px solid var(--rule);outline:none;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--ink);resize:none;line-height:1.9;height:88px;display:block;margin-top:6px;padding-bottom:4px;" oninput="ciChanged()"></textarea>
+            <div id="ciHelpedOut" style="display:none;margin-top:8px;padding:10px 12px;background:rgba(201,169,110,.06);border:.5px solid rgba(201,169,110,.2);border-radius:2px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--ink-light);line-height:1.8;"></div>
+          </div>
+          <div>
+            <div class="clb">I want to work on</div>
+            <textarea id="ciWork" placeholder="Write freely, AI will beautify it..." style="width:100%;background:transparent;border:none;border-bottom:.5px solid var(--rule);outline:none;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--ink);resize:none;line-height:1.9;height:64px;display:block;margin-top:6px;padding-bottom:4px;" oninput="ciChanged()"></textarea>
+            <div id="ciWorkOut" style="display:none;margin-top:8px;padding:10px 12px;background:rgba(201,169,110,.06);border:.5px solid rgba(201,169,110,.2);border-radius:2px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--ink-light);line-height:1.8;"></div>
+          </div>
+          <div style="margin-top:12px;">
+            <button id="ciBeautifyBtn" onclick="beautifyCheckin()" style="display:none;font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-light);background:none;border:.5px solid var(--rule);padding:6px 14px;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='var(--ink)';this.style.color='var(--cream)'" onmouseout="this.style.background='none';this.style.color='var(--ink-light)'">✦ Beautify with AI</button>
+          </div>
+        </div>
+      </div>
+      <div class="pr"><div class="pb"></div>
+        <div class="ctab">Check In</div>
+        <div class="pc">
+          <div class="rh"><span>Check In</span><span>12</span></div>
+          <div style="margin-bottom:12px;">
+            <div class="clb">My Growth <span style="font-style:italic;font-weight:300;">(chart below)</span></div>
+            <div class="gc">
+              <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-muted);position:absolute;top:-2px;left:6px;opacity:.7;">Self-understanding</div>
+              <svg viewBox="0 0 200 70" style="position:absolute;bottom:1px;left:1px;width:calc(100% - 1px);height:calc(100% - 10px);opacity:.5;">
+                <polyline points="0,65 40,55 80,40 120,30 160,20 200,10" fill="none" stroke="#c9a96e" stroke-width="1.5" stroke-dasharray="4,2"/>
+                <circle cx="200" cy="10" r="3" fill="#c9a96e"/>
+              </svg>
+            </div>
+          </div>
+          <div class="tr2"><span class="tk">Sense of Direction</span><div class="tvs"><span class="tv" onclick="togtr(this)">Foggy</span><span class="tor">or</span><span class="tv on" onclick="togtr(this)">Clear</span></div></div>
+          <div class="tr2"><span class="tk">Hours of Sleep</span><div class="tvs"><span class="tv" onclick="togtr(this)">4</span><span class="tv" onclick="togtr(this)">5</span><span class="tv" onclick="togtr(this)">6</span><span class="tv" onclick="togtr(this)">7</span><span class="tv on" onclick="togtr(this)">8</span><span class="tv" onclick="togtr(this)">9+</span></div></div>
+          <div class="tr2"><span class="tk">Quiet Time</span><div class="tvs"><span class="tv on" onclick="togtr(this)">Yes</span><span class="tor">or</span><span class="tv" onclick="togtr(this)">No</span></div></div>
+          <div class="tr2"><span class="tk">Screen Time</span><div class="tvs"><span class="tv" onclick="togtr(this)">Too Much</span><span class="tor">or</span><span class="tv on" onclick="togtr(this)">Just Right</span></div></div>
+          <div class="tr2"><span class="tk">Reading Time</span><div class="tvs"><span class="tv on" onclick="togtr(this)">Yes</span><span class="tor">or</span><span class="tv" onclick="togtr(this)">No</span></div></div>
+
+          <div style="margin-top:14px;padding-top:12px;border-top:.5px solid var(--rule);">
+            <div style="font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Reflect with AI</div>
+            <div style="font-style:italic;font-size:12px;color:var(--ink-muted);margin-bottom:10px;line-height:1.6;">Write anything about your week. The AI will ask one question to help you go deeper, then turn it into something beautiful.</div>
+            <div id="ciChat" style="max-height:120px;overflow-y:auto;margin-bottom:8px;"></div>
+            <div style="border-top:.5px solid var(--rule);padding-top:8px;display:flex;flex-direction:column;gap:6px;">
+              <textarea id="ciChatInput" placeholder="How has your week been..." style="width:100%;background:transparent;border:none;outline:none;font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--ink);resize:none;line-height:1.6;height:44px;" onkeydown="ciChatKey(event)"></textarea>
+              <button onclick="sendCiChat()" style="align-self:flex-end;font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-light);background:none;border:.5px solid var(--rule);padding:5px 14px;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='var(--ink)';this.style.color='var(--cream)'" onmouseout="this.style.background='none';this.style.color='var(--ink-light)'">Send →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S7: pp13-14 Chapter Two -->
+    <div class="spread" id="s7">
+      <div class="pl"><div class="pb"></div>
+        <div class="pc" style="display:flex;flex-direction:column;justify-content:center;">
+          <div class="clabel">Chapter Two</div>
+          <h2 style="font-size:30px;margin-top:6px;">On Relationships</h2>
+          <div class="gr"></div>
+          <p class="bt" style="font-style:italic;">Each chapter opens with a new conversation. The book already knows your portrait from Chapter One — so the questions go deeper, shaped around what you revealed before.</p>
+          <div class="cq" style="margin-top:14px;">"The meeting of two personalities is like the contact of two chemical substances: if there is any reaction, both are transformed."<cite>Carl Jung</cite></div>
+        </div>
+      </div>
+      <div class="pr"><div class="pb"></div>
+        <div class="lock">
+          <div style="font-size:18px;opacity:.3;">✦</div>
+          <div class="ltext">This chapter unlocks after you complete your first Check In on pp. 11–12.</div>
+          <div style="margin-top:12px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-muted);">Return to page 8 →</div>
+        </div>
+        <div class="sn">Locked chapters appear greyed in Contents. Unlock by completing Check In.</div>
+      </div>
+    </div>
+
+    <!-- S8: pp15-16 Autobiography -->
+    <div class="spread" id="s8">
+      <div class="pl"><div class="pb"></div>
+        <div class="pc">
+          <div class="rh"><span>Your Autobiography</span><span>15</span></div>
+          <div class="clabel" style="margin-bottom:10px;">Grows with every session</div>
+          <h2>The Story So Far</h2>
+          <p class="bt">After each completed chapter, the book adds a new entry here — written like a biography. Over time this becomes a portrait of who you have been, who you are becoming, and the distance between the two.</p>
+          <div class="ae">
+            <div class="ad">Session One · March 2025</div>
+            <div class="ach">On Who You Are</div>
+            <div class="ap">She has always lived slightly ahead of where she stands. Not recklessly, but with the quiet certainty that the life she is building is not quite finished yet — that somewhere between who she has been told to be and who she suspects herself to be, there is a third person waiting to be named.</div>
+          </div>
+        </div>
+      </div>
+      <div class="pr"><div class="pb"></div>
+        <div class="pc">
+          <div class="rh"><span>Your Autobiography</span><span>16</span></div>
+          <div style="height:14px;"></div>
+          <div class="ae" style="opacity:.35;"><div class="ad">Session Two · Coming soon</div><div class="ach">On Relationships</div><div class="ap">This chapter will be written after your second conversation.</div></div>
+          <div class="ae" style="opacity:.2;"><div class="ad">Session Three · Locked</div><div class="ach">On Work</div><div class="ap">This chapter will be written after your third conversation.</div></div>
+          <div class="ae" style="opacity:.1;"><div class="ad">Session Four · Locked</div><div class="ach">On Fear</div><div class="ap">This chapter will be written after your fourth conversation.</div></div>
+          <div class="sn">Future chapters fade in as sessions are completed. AI synthesises into full portrait after 5+.</div>
+        </div>
+      </div>
+    </div>
+    <!-- S9: pp17-18 Autobiography Sample — On Relationships -->
+    <div class="spread" id="s9">
+
+      <div class="pl"><div class="pb"></div>
+        <div class="pc">
+          <!-- page fade overlay -->
+          <div style="position:absolute;bottom:52px;left:0;right:0;height:140px;background:linear-gradient(to bottom,transparent,var(--cream));pointer-events:none;z-index:2;"></div>
+          <div class="rh"><span>Your Autobiography</span><span>17</span></div>
+          <div class="clabel" style="margin-bottom:4px;">Chapter Two</div>
+          <h2 style="font-size:26px;margin-bottom:4px;">On Relationships</h2>
+          <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-muted);margin-bottom:14px;">Session Two · April 2025</div>
+          <div class="gr"></div>
+          <p class="bt" style="font-style:italic;font-size:15px;line-height:1.9;">She has always loved people the way she loves a good book — slowly, carefully, rereading the same passages until she understands what they were really trying to say.</p>
+          <p class="bt">The people she keeps close are few. This is not because she is cold, or because she finds others uninteresting. It is because she takes relationships seriously, the way a person takes a vow seriously — and she has learned, through the particular education of being misread, that not everyone is prepared for the depth she arrives with.</p>
+          <p class="bt">She spoke, in this session, about a friendship that had quietly ended. Not dramatically. No argument, no rupture — just the slow realisation that the other person had been seeing someone else when they looked at her. A version. A surface. She had outgrown the reflection.</p>
+          <p class="bt">"I don't think she knew me," she said. "I think she knew who she needed me to be."</p>
+          <p class="bt">There is a particular loneliness in being misunderstood by someone who loves you.</p>
+        </div>
+        <div class="sn">Sample — this is what a completed chapter looks like</div>
+      </div>
+
+      <div class="pr"><div class="pb"></div>
+        <div class="pc">
+          <!-- page fade overlay -->
+          <div style="position:absolute;bottom:52px;left:0;right:0;height:160px;background:linear-gradient(to bottom,transparent,var(--warm-white));pointer-events:none;z-index:2;"></div>
+          <div class="rh"><span>Your Autobiography</span><span>18</span></div>
+          <p class="bt">What she is learning — slowly, with the resistance of someone who has always been more comfortable giving than receiving — is that being truly known requires a different kind of courage than she expected.</p>
+          <p class="bt">Not the courage to be vulnerable. She has that. She has always had that, in abundance, often to her own detriment. What she is learning is the courage to be patient with the process of being known. To stay in the room while someone else figures out who she is, even when their version is still incomplete.</p>
+          <p class="bt">She is, at her core, someone who believes in people's capacity to surprise her. This is both her greatest strength and, occasionally, her most expensive habit.</p>
+          <div style="margin:14px 0;padding:12px 14px;border-left:2px solid rgba(201,169,110,.4);">
+            <div style="font-style:italic;font-size:14px;line-height:1.85;color:var(--ink-light);">"I think I'm finally learning the difference between intimacy and familiarity. They look the same from the outside. But one of them requires you to keep showing up even after the other person has stopped surprising you."</div>
+          </div>
+          <p class="bt">The relationships she is building now are different. Quieter. Less urgent. She is no longer trying to be understood all at once.</p>
+          <p class="bt">She is learning to let herself be discovered gradually — the way light enters a room at dawn, not all at once but incrementally, until suddenly everything is visible.</p>
+          <p class="bt">The next chapter will ask: who are the people she is building this with?</p>
+        </div>
+        <div style="position:absolute;bottom:52px;left:44px;right:44px;text-align:center;">
+          <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink-muted);opacity:.5;">Continue writing to unlock the next chapter</div>
+        </div>
+        <div class="sn">Sample — AI-written after Session Two is complete</div>
+      </div>
+
+    </div>
+
+
+
+    <!-- S10: pp19-20 Full Portrait unlock gate -->
+    <div class="spread" id="s10">
+
+      <!-- LEFT: what the full portrait is -->
+      <div class="pl"><div class="pb"></div>
+        <div class="pc">
+          <div class="rh"><span>The Complete Portrait</span><span>19</span></div>
+          <div class="clabel" style="margin-bottom:6px;">After 5 Sessions</div>
+          <h2 style="font-size:26px;margin-bottom:6px;">Your Full Autobiography</h2>
+          <div class="gr"></div>
+          <p class="bt">What you have been reading — the chapter on relationships, the portrait of who you are — is only the beginning. After five conversations, the book assembles everything into a single document.</p>
+          <p class="bt">A complete autobiography. Written in your voice. Structured like a book. Covering who you are, how you love, how you work, what you fear, what you want, and who you are becoming.</p>
+          <p class="bt">This is not a summary. It is not a personality report. It is a piece of writing — the kind you might find tucked inside the back of a journal, or read aloud to someone you trust completely.</p>
+          <div style="margin-top:18px;padding:14px 16px;border:.5px solid rgba(201,169,110,.3);border-radius:2px;background:rgba(201,169,110,.04);">
+            <div style="font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">What it includes</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;gap:10px;align-items:baseline;"><div style="width:4px;height:4px;background:var(--gold);border-radius:50%;flex-shrink:0;margin-top:6px;"></div><div style="font-size:13px;color:var(--ink-light);line-height:1.6;">A narrative portrait of your personality type</div></div>
+              <div style="display:flex;gap:10px;align-items:baseline;"><div style="width:4px;height:4px;background:var(--gold);border-radius:50%;flex-shrink:0;margin-top:6px;"></div><div style="font-size:13px;color:var(--ink-light);line-height:1.6;">Five completed chapters — one per session</div></div>
+              <div style="display:flex;gap:10px;align-items:baseline;"><div style="width:4px;height:4px;background:var(--gold);border-radius:50%;flex-shrink:0;margin-top:6px;"></div><div style="font-size:13px;color:var(--ink-light);line-height:1.6;">A final synthesis: who you are becoming</div></div>
+              <div style="display:flex;gap:10px;align-items:baseline;"><div style="width:4px;height:4px;background:var(--gold);border-radius:50%;flex-shrink:0;margin-top:6px;"></div><div style="font-size:13px;color:var(--ink-light);line-height:1.6;">Shareable as a beautifully formatted PDF</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="sn">pp. 19–20 · Full portrait — unlocks after 5 completed sessions</div>
+      </div>
+
+      <!-- RIGHT: progress + locked state -->
+      <div class="pr"><div class="pb"></div>
+        <div class="pc" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
+
+          <!-- progress ring / counter -->
+          <div style="margin-bottom:28px;">
+            <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--ink-muted);margin-bottom:16px;">Sessions completed</div>
+            <div style="display:flex;gap:12px;justify-content:center;align-items:center;">
+              <div style="width:36px;height:36px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;color:var(--cream);">1</div>
+              <div style="width:36px;height:36px;border-radius:50%;border:.5px solid var(--rule);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;color:var(--ink-muted);">2</div>
+              <div style="width:36px;height:36px;border-radius:50%;border:.5px solid var(--rule);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;color:var(--ink-muted);">3</div>
+              <div style="width:36px;height:36px;border-radius:50%;border:.5px solid var(--rule);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;color:var(--ink-muted);">4</div>
+              <div style="width:36px;height:36px;border-radius:50%;border:.5px solid var(--rule);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;color:var(--ink-muted);">5</div>
+            </div>
+            <div style="margin-top:14px;height:2px;background:var(--rule);border-radius:2px;overflow:hidden;max-width:200px;margin-left:auto;margin-right:auto;">
+              <div style="width:20%;height:100%;background:linear-gradient(to right,var(--gold),var(--gold-light));border-radius:2px;"></div>
+            </div>
+            <div style="margin-top:8px;font-size:11px;letter-spacing:1.5px;color:var(--ink-muted);">1 of 5 complete</div>
+          </div>
+
+          <div style="width:40px;height:1px;background:var(--gold);opacity:.3;margin-bottom:24px;"></div>
+
+          <div style="max-width:240px;">
+            <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--ink);line-height:1.4;margin-bottom:14px;">4 more conversations until your full autobiography is written</div>
+            <div style="font-style:italic;font-size:13px;color:var(--ink-muted);line-height:1.8;margin-bottom:24px;">Each session adds a new chapter. The book is already reading you — it just needs more pages to work with.</div>
+            <div onclick="goTo(4)" style="display:inline-block;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);cursor:pointer;border-bottom:.5px solid rgba(201,169,110,.4);padding-bottom:2px;transition:opacity .2s;" onmouseover="this.style.opacity='.6'" onmouseout="this.style.opacity='1'">Return to page 8 to continue →</div>
+            <div class="sn">The complete portrait is the product's ultimate deliverable — shareable as PDF</div>
+      </div>
+
+    </div>
+
+    <!-- NAV -->
+    <div class="bnav">
+      <button class="nbtn" onclick="prev()">‹</button>
+      <div class="dots" id="dots"></div>
+      <button class="nbtn" onclick="next()">›</button>
+    </div>
+  </div>
+  <div id="sl" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-muted);opacity:.5;"></div>
+</div>
+
+<script>
+const N=10, labs=['pp. 1–2 · Dedication & Title','pp. 3–4 · Contents & Four Natures','pp. 5–6 · The Method','pp. 7–8 · The Conversation (page 8 — always here)','pp. 9–10 · Your Portrait (AI generated)','pp. 11–12 · The Check-In (repeating)','pp. 13–14 · Chapter Two Opening','pp. 15–16 · The Autobiography','pp. 17–18 · Autobiography Sample — On Relationships','pp. 19–20 · Full Portrait unlocks at 5 sessions'];
+let cur=1, flip=false, FMS=650;
+
+function bd(){
+  const c=document.getElementById('dots'); c.innerHTML='';
+  for(let i=1;i<=N;i++){const d=document.createElement('div');d.className='dot'+(i===cur?' on':'');d.onclick=()=>goTo(i);c.appendChild(d);}
+}
+
+function goTo(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=Math.max(1,Math.min(N,n));
+  document.getElementById('s'+cur).classList.add('active');
+  bd();
+  document.getElementById('pf').style.width=Math.round(cur/N*100)+'%';
+  document.getElementById('sl').textContent=labs[cur-1];
+}
+
+function next(){if(flip||cur>=N)return;fwd();}
+function prev(){if(flip||cur<=1)return;bk();}
+
+function clp(idx,side){
+  const sp=document.getElementById('s'+idx); if(!sp)return document.createElement('div');
+  const pg=sp.querySelector(side==='r'?'.pr':'.pl'); if(!pg)return document.createElement('div');
+  const c=pg.cloneNode(true); Object.assign(c.style,{position:'absolute',inset:'0',width:'100%',height:'100%',borderRadius:'0'}); return c;
+}
+
+function mkp(fe,be,dir){
+  const p=document.createElement('div');
+  Object.assign(p.style,{position:'absolute',top:'0',width:'50%',height:'100%',transformStyle:'preserve-3d',zIndex:'60',
+    right:dir==='f'?'0':'auto', left:dir==='f'?'auto':'0',
+    transformOrigin:dir==='f'?'left center':'right center',
+    transform:'perspective(2000px) rotateY(0deg)'});
+  const f=document.createElement('div');
+  Object.assign(f.style,{position:'absolute',inset:'0',backfaceVisibility:'hidden',overflow:'hidden',transform:'translateZ(1px)'});
+  f.appendChild(fe);
+  const b=document.createElement('div');
+  Object.assign(b.style,{position:'absolute',inset:'0',backfaceVisibility:'hidden',overflow:'hidden',transform:'rotateY(180deg) translateZ(1px)',background:'var(--cream)'});
+  b.appendChild(be);
+  p.appendChild(f); p.appendChild(b); return p;
+}
+
+function fwd(){
+  flip=true;
+  const OB=document.getElementById('OB');
+  const p=mkp(clp(cur,'r'),clp(cur+1,'l'),'f');
+  OB.appendChild(p); goTo(cur+1);
+  requestAnimationFrame(()=>{p.style.transition='transform '+FMS+'ms ease-in-out';p.style.transform='perspective(2000px) rotateY(-180deg)';});
+  setTimeout(()=>{OB.removeChild(p);flip=false;},FMS+60);
+}
+
+function bk(){
+  flip=true;
+  const OB=document.getElementById('OB');
+  const p=mkp(clp(cur,'l'),clp(cur-1,'r'),'b');
+  OB.appendChild(p); goTo(cur-1);
+  requestAnimationFrame(()=>{p.style.transition='transform '+FMS+'ms ease-in-out';p.style.transform='perspective(2000px) rotateY(180deg)';});
+  setTimeout(()=>{OB.removeChild(p);flip=false;},FMS+60);
+}
+
+// Onboarding
+function ni(){document.getElementById('obHint').classList.toggle('on',document.getElementById('nameInput').value.trim().length>0);}
+function nk(e){if(e.key==='Enter')sn2();}
+function sn2(){
+  const v=document.getElementById('nameInput').value.trim(); if(!v)return;
+  const ob=document.getElementById('ob'); ob.classList.add('out');
+  setTimeout(()=>{
+    ob.style.display='none';
+    document.getElementById('coverState').style.display='flex';
+    const el=document.getElementById('coverAuthor'); el.textContent='';
+    let i=0; const iv=setInterval(()=>{el.textContent+=v[i++];if(i>=v.length)clearInterval(iv);},80);
+  },700);
+}
+
+function openBook(){document.getElementById('coverState').style.display='none';document.getElementById('bookState').style.display='flex';bd();document.getElementById('sl').textContent=labs[0];}
+function closeBook(){document.getElementById('bookState').style.display='none';document.getElementById('coverState').style.display='flex';}
+
+function tog(el){el.closest('.copts').querySelectorAll('.co').forEach(o=>o.classList.remove('on'));el.classList.add('on');}
+function togtr(el){el.closest('.tvs').querySelectorAll('.tv').forEach(v=>v.classList.remove('on'));el.classList.add('on');}
+
+// Chat
+const ar=['That\'s worth sitting with. When you say it feels off — is it more like something is missing, or like something doesn\'t fit?','And where do you feel that most — in your work, your relationships, or somewhere quieter than both?','You\'ve described something important. What would it feel like if that actually changed?','I\'m beginning to see a shape to what you\'re describing. Is there anything else you want to say before I reflect it back?','Based on everything you\'ve shared, I\'m ready to write your first chapter. Shall I begin?'];
+let ai=0;
+
+function sm(){
+  const inp=document.getElementById('chatInput'),t=inp.value.trim(); if(!t)return;
+  const msgs=document.getElementById('chatMessages');
+  const um=document.createElement('div'); um.className='msg user'; um.innerHTML='<div class="mt2">'+t+'</div>';
+  msgs.appendChild(um); inp.value='';
+  setTimeout(()=>{
+    const am=document.createElement('div'); am.className='msg ai'; am.innerHTML='<div class="mt2">'+ar[ai%ar.length]+'</div>';
+    msgs.appendChild(am); ai++; msgs.scrollTop=msgs.scrollHeight;
+  },800);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function ck(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sm();}}
+
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('bookState').style.display!=='none'){
+    if(e.key==='ArrowRight')next();
+    if(e.key==='ArrowLeft')prev();
+  }
+});
+bd();
+
+// ── TOP BUTTON: Close on spread 1, Contents after ──
+function topBtnClick(){
+  if(cur===1){ closeBook(); }
+  else { goTo(2); }
+}
+function updateTopBtn(){
+  const btn=document.getElementById('topBtn');
+  if(!btn)return;
+  btn.textContent = cur===1 ? '← Close' : '← Contents';
+}
+// patch goTo to update button
+const _goTo=goTo;
+goTo=function(n){_goTo(n);updateTopBtn();};
+// also patch openBook
+const _openBook=openBook;
+openBook=function(){_openBook();updateTopBtn();};
+
+// ── CHECK-IN: show beautify button when user types ──
+function ciChanged(){
+  const h=document.getElementById('ciHelped').value.trim();
+  const w=document.getElementById('ciWork').value.trim();
+  document.getElementById('ciBeautifyBtn').style.display=(h||w)?'inline-block':'none';
+}
+
+// ── BEAUTIFY with AI (demo) ──
+const beautifyMap = {
+  helped: [
+    "Long walks at dusk, the kind where thoughts untangle themselves. A conversation that asked more of me than I expected. Quiet mornings with coffee and no particular agenda.",
+    "The simple act of showing up — for work, for others, for the version of myself still learning what consistency feels like.",
+    "Music playing in the background of ordinary things. The feeling of finishing something, however small. Being remembered by someone I hadn't thought to call."
+  ],
+  work: [
+    "Learning to be present in the spaces between things — to let stillness be productive in its own right.",
+    "The art of saying what I mean without apologising for meaning it.",
+    "Trusting that the work I cannot yet see is still, somewhere, being done."
+  ]
+};
+let bIdx=0;
+
+function beautifyCheckin(){
+  const hVal=document.getElementById('ciHelped').value.trim();
+  const wVal=document.getElementById('ciWork').value.trim();
+  if(hVal){
+    const out=document.getElementById('ciHelpedOut');
+    out.textContent=beautifyMap.helped[bIdx%beautifyMap.helped.length];
+    out.style.display='block';
+  }
+  if(wVal){
+    const out=document.getElementById('ciWorkOut');
+    out.textContent=beautifyMap.work[bIdx%beautifyMap.work.length];
+    out.style.display='block';
+  }
+  bIdx++;
+}
+
+// ── CHECK-IN CHAT ──
+const ciReplies=[
+  "That's a gentle place to begin. What felt most alive for you in that — was it the act itself, or what it made possible?",
+  "I notice you keep returning to a sense of quiet. What does that quietness give you that the noise doesn't?",
+  "There's something tender in what you've described. If that moment could speak, what do you think it would say to you?",
+  "You've given me enough to work with. Let me turn this into something worth keeping..."
+];
+let ciAi=0;
+
+function sendCiChat(){
+  const inp=document.getElementById('ciChatInput');
+  const t=inp.value.trim(); if(!t)return;
+  const chat=document.getElementById('ciChat');
+
+  const um=document.createElement('div');
+  Object.assign(um.style,{fontFamily:"'Cormorant Garamond',serif",fontSize:'13px',lineHeight:'1.7',color:'var(--ink)',padding:'5px 8px',background:'rgba(201,169,110,.06)',borderRadius:'2px',marginBottom:'8px'});
+  um.textContent=t; chat.appendChild(um); inp.value='';
+
+  setTimeout(()=>{
+    const am=document.createElement('div');
+    Object.assign(am.style,{fontFamily:"'Cormorant Garamond',serif",fontStyle:'italic',fontSize:'13px',lineHeight:'1.7',color:'var(--ink-light)',paddingLeft:'10px',borderLeft:'2px solid rgba(201,169,110,.35)',marginBottom:'8px'});
+    const reply=ciReplies[ciAi%ciReplies.length];
+    am.textContent=reply; chat.appendChild(am); ciAi++;
+    chat.scrollTop=chat.scrollHeight;
+    // On 4th reply, also trigger beautify
+    if(ciAi>=4 && (document.getElementById('ciHelped').value.trim()||document.getElementById('ciWork').value.trim())){
+      beautifyCheckin();
+    }
+  },800);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function ciChatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendCiChat();}}
+</script>
+</body>
+</html>

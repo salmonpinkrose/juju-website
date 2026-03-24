@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyAnswers — Case Study</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=AR+One+Sans&family=Noto+Sans+HK&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F2F2F1;
+            --text-color: #000000;
+            --muted-color: #666666;
+            --font-main: "Special Elite", "Noto Sans HK", sans-serif;
+            --font-code: "AR One Sans", sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: var(--text-color); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* ── NAV ── */
+        .top-bar {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            font-size: 13px;
+            font-family: var(--font-code);
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #333; text-decoration: none; }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            font-family: var(--font-code);
+        }
+
+        .nav-links a {
+            color: #999;
+            transition: all 0.2s ease;
+            display: inline-block;
+            transform-origin: bottom center;
+        }
+
+        .nav-links a:hover { color: #333; text-decoration: none; }
+        .nav-links a:active { color: #ccc; transform: perspective(500px) rotateX(60deg) skewX(-15deg); }
+
+        /* ── LAYOUT ── */
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            margin-top: 48px;
+        }
+
+        /* ── SIDEBAR TOC ── */
+        .toc {
+            position: sticky;
+            top: 32px;
+            height: fit-content;
+        }
+
+        .toc-title {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 16px;
+        }
+
+        .toc a {
+            display: block;
+            font-size: 12px;
+            font-family: var(--font-code);
+            color: #aaa;
+            padding: 5px 0;
+            border-left: 2px solid transparent;
+            padding-left: 12px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .toc a:hover { color: #333; border-left-color: #333; text-decoration: none; }
+        .toc a.active { color: #000; border-left-color: #000; }
+
+        /* ── CONTENT ── */
+        .content { min-width: 0; }
+
+        /* Hero */
+        .hero {
+            margin-bottom: 80px;
+            padding-bottom: 60px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .hero-label {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            letter-spacing: -1px;
+            margin: 0 0 16px;
+            line-height: 1.1;
+        }
+
+        .hero-sub {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #555;
+            font-family: var(--font-main);
+            max-width: 560px;
+            margin-bottom: 36px;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .meta-item b {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .meta-item span {
+            font-size: 13px;
+            font-family: var(--font-main);
+            color: #333;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 72px;
+            scroll-margin-top: 32px;
+        }
+
+        .section-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 8px;
+        }
+
+        .section h2 {
+            font-size: 28px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            letter-spacing: -0.5px;
+            margin: 0 0 24px;
+            line-height: 1.3;
+        }
+
+        .section p {
+            font-size: 14px;
+            line-height: 1.9;
+            color: #444;
+            font-family: var(--font-main);
+            margin: 0 0 16px;
+            max-width: 640px;
+        }
+
+        .section p:last-child { margin-bottom: 0; }
+
+        /* Stats row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .stat-box {
+            padding: 24px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 2px;
+        }
+
+        .stat-box .num {
+            font-size: 32px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .stat-box .label {
+            font-size: 12px;
+            font-family: var(--font-code);
+            color: #888;
+        }
+
+        /* Insight cards */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .insight-card {
+            padding: 24px;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 2px;
+        }
+
+        .insight-card .num {
+            font-size: 11px;
+            letter-spacing: 1px;
+            font-family: var(--font-code);
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .insight-card h4 {
+            font-size: 15px;
+            font-family: var(--font-main);
+            margin: 0 0 10px;
+        }
+
+        .insight-card .quote {
+            font-size: 12px;
+            font-family: var(--font-main);
+            color: #777;
+            font-style: italic;
+            border-left: 2px solid #ddd;
+            padding-left: 12px;
+            margin: 10px 0;
+            line-height: 1.7;
+        }
+
+        .insight-card .insight-text {
+            font-size: 12px;
+            font-family: var(--font-code);
+            color: #999;
+        }
+
+        /* Persona cards */
+        .persona-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .persona-card {
+            padding: 24px;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 2px;
+        }
+
+.persona-card .persona-name {
+            font-size: 15px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .persona-card .persona-type {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            margin-bottom: 12px;
+        }
+
+        .persona-card .persona-quote {
+            font-size: 12px;
+            font-style: italic;
+            font-family: var(--font-main);
+            color: #666;
+            border-left: 2px solid #ddd;
+            padding-left: 12px;
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        .persona-card .jtbd {
+            font-size: 12px;
+            font-family: var(--font-code);
+            color: #999;
+            line-height: 1.6;
+        }
+
+        /* Comparison table */
+        .comp-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin: 32px 0;
+        }
+
+        .comp-table th {
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: var(--font-code);
+            color: #aaa;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            font-weight: 500;
+        }
+
+        .comp-table td {
+            padding: 12px 14px;
+            font-family: var(--font-main);
+            font-size: 13px;
+            color: #444;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .comp-table tr.highlight td {
+            color: #000;
+            font-weight: 500;
+            background: rgba(0,0,0,0.02);
+        }
+
+        .dot-yes { color: #333; }
+        .dot-no { color: #ccc; }
+
+        /* Version comparison */
+        .version-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .version-card {
+            padding: 28px;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 2px;
+        }
+
+        .version-card h4 {
+            font-size: 14px;
+            font-family: var(--font-code);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #aaa;
+            margin: 0 0 16px;
+            font-weight: 500;
+        }
+
+        .version-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .version-card ul li {
+            font-size: 13px;
+            font-family: var(--font-main);
+            color: #444;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            line-height: 1.6;
+        }
+
+        .version-card ul li:last-child { border-bottom: none; }
+
+        /* KPI grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .kpi-card {
+            padding: 20px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 2px;
+        }
+
+        .kpi-card .kpi-label {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            margin-bottom: 6px;
+        }
+
+        .kpi-card .kpi-val {
+            font-size: 18px;
+            font-family: var(--font-main);
+            font-weight: bold;
+        }
+
+        /* Reflection list */
+        .reflection-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0;
+        }
+
+        .reflection-list li {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            display: grid;
+            grid-template-columns: 32px 1fr;
+            gap: 16px;
+        }
+
+        .reflection-list li .r-num {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            padding-top: 3px;
+        }
+
+        .reflection-list li .r-text {
+            font-size: 14px;
+            font-family: var(--font-main);
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .reflection-list li .r-text strong {
+            display: block;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        /* Next phases */
+        .phases-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .phase-card {
+            padding: 24px;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 2px;
+        }
+
+        .phase-card h4 {
+            font-size: 12px;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaa;
+            margin: 0 0 14px;
+            font-weight: 500;
+        }
+
+        .phase-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .phase-card ul li {
+            font-size: 13px;
+            font-family: var(--font-main);
+            color: #444;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            line-height: 1.6;
+        }
+
+        .phase-card ul li:last-child { border-bottom: none; }
+
+        /* Figma embeds */
+        .figma-embed {
+            margin: 32px 0;
+        }
+
+        .figma-embed-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 10px;
+        }
+
+        .figma-frame {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 */
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .figma-frame iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid rgba(0,0,0,0.08);
+            margin-top: 24px;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px 28px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            font-size: 13px;
+            color: #666;
+            font-family: var(--font-code);
+        }
+
+        .footer-item b { display: block; font-weight: 500; margin-bottom: 6px; color: #666; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .page { grid-template-columns: 1fr; }
+            .toc { display: none; }
+            .meta-grid { grid-template-columns: 1fr 1fr; }
+            .insight-grid { grid-template-columns: 1fr; }
+            .persona-grid { grid-template-columns: 1fr; }
+            .version-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            .phases-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 36px; }
+            .meta-grid { grid-template-columns: 1fr 1fr; }
+            .stats-row { grid-template-columns: 1fr; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            .footer-inner { grid-template-columns: 1fr 1fr; row-gap: 16px; font-size: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links { gap: 20px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="./works.html" class="back-link">← Works</a>
+        <nav class="nav-links">
+            <a href="./index.html">Sketchbook</a>
+            <a href="./works.html">Works</a>
+            <a href="./experience.html">Experience</a>
+            <a href="./about.html">About</a>
+        </nav>
+    </div>
+
+    <div class="page">
+
+        <!-- TOC -->
+        <aside class="toc">
+            <div class="toc-title">Contents</div>
+            <a href="#problem">01 — Problem</a>
+            <a href="#context">02 — Context</a>
+            <a href="#methodology">03 — Methodology</a>
+            <a href="#insights">04 — Insights</a>
+            <a href="#personas">05 — Personas</a>
+            <a href="#competitive">06 — Competitive</a>
+            <a href="#solution">07 — Solution</a>
+            <a href="#iteration">08 — Iteration</a>
+            <a href="#metrics">09 — Metrics</a>
+            <a href="#reflections">10 — Reflections</a>
+            <a href="#next">11 — What's Next</a>
+        </aside>
+
+        <!-- Content -->
+        <main class="content">
+
+            <!-- Hero -->
+            <div class="hero">
+                <p class="hero-label">Case Study</p>
+                <h1>MyAnswers</h1>
+                <p class="hero-sub">
+                    An AI-powered personality system that replaces forced-choice tests
+                    with a free-text conversation — and replaces the label with a story.
+                </p>
+                <div class="meta-grid">
+                    <div class="meta-item"><b>Role</b><span>PM + Builder</span></div>
+                    <div class="meta-item"><b>Timeline</b><span>2024 — Ongoing</span></div>
+                    <div class="meta-item"><b>Versions</b><span>V1 + V2</span></div>
+                    <div class="meta-item"><b>Research</b><span>5,000+ posts</span></div>
+                </div>
+                <div class="meta-grid" style="margin-top:16px;">
+                    <div class="meta-item" style="grid-column: 1/-1;">
+                        <b>Tech Stack</b>
+                        <span>NLP / LLM &nbsp;·&nbsp; Figma Make &nbsp;·&nbsp; React + Tailwind &nbsp;·&nbsp; Reddit API (PRAW) &nbsp;·&nbsp; Python</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prototype embed -->
+            <div style="margin-bottom: 72px;">
+                <p style="font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#aaa; font-family:var(--font-code); margin-bottom:12px;">V2 Prototype — Interactive</p>
+                <div style="width:100%; height:640px; border:1px solid rgba(0,0,0,0.08); border-radius:2px; overflow:hidden;">
+                    <iframe src="./myanswers-prototype.html" style="width:100%; height:100%; border:none; display:block;"></iframe>
+                </div>
+            </div>
+
+            <!-- 01 Problem -->
+            <section class="section" id="problem">
+                <p class="section-label">01 — Most Important</p>
+                <h2>The test is broken by design.</h2>
+                <p>Personality tests are one of the most popular self-knowledge tools on the planet, but they're broken by design — forced-choice questions misrepresent who people are, producing labels that don't stick. MyAnswers replaces the test with a conversation, and replaces the label with a story.</p>
+                <p>The problem isn't that people don't want to understand themselves — the demand is enormous. The problem is that every tool asking them to choose between A and B is asking the wrong question entirely.</p>
+                <div class="stats-row">
+                    <div class="stat-box"><span class="num">50M+</span><span class="label">people have taken the official MBTI</span></div>
+                    <div class="stat-box"><span class="num">39–76%</span><span class="label">get a different type on retest within 5 weeks</span></div>
+                    <div class="stat-box"><span class="num">18M+</span><span class="label">monthly visitors to 16Personalities alone</span></div>
+                </div>
+            </section>
+
+            <!-- 02 Context -->
+            <section class="section" id="context">
+                <p class="section-label">02 — Context</p>
+                <h2>What MBTI is, and why it won't go away.</h2>
+                <p>The Myers-Briggs Type Indicator sorts people into 16 types across four dimensions, producing a four-letter code like INFJ or ESTP. Developed in the 1940s and taken by over 50 million people, it generates hundreds of millions of social media posts every year.</p>
+                <p>Despite well-documented reliability problems, MBTI has built a cultural layer that science alone can't displace. Reddit communities like r/mbti have hundreds of thousands of members. TikTok personality content reaches millions of views regularly. The demand is real — the tool just hasn't kept up.</p>
+                <p style="font-size:12px; font-family:var(--font-code); color:#aaa; margin-top:16px;">Subreddits researched: r/mbti &nbsp;·&nbsp; r/mbtitests &nbsp;·&nbsp; r/personalitytype &nbsp;·&nbsp; r/psychology &nbsp;·&nbsp; r/selfimprovement</p>
+            </section>
+
+            <!-- 03 Methodology -->
+            <section class="section" id="methodology">
+                <p class="section-label">03 — Credibility</p>
+                <h2>5,000 honest opinions about a broken product.</h2>
+                <p>Rather than running surveys or relying on assumption, I used the Reddit API (PRAW) to collect posts and comments from five personality-focused subreddits. Posts were filtered for relevance, anonymised, and clustered by recurring theme.</p>
+                <p>Reddit was chosen deliberately: it's where people say what they actually think about products, not what they tell researchers. The frustration is unfiltered. The pain points are real.</p>
+                <div class="stats-row">
+                    <div class="stat-box"><span class="num">5K+</span><span class="label">posts collected</span></div>
+                    <div class="stat-box"><span class="num">85%+</span><span class="label">relevance rate</span></div>
+                    <div class="stat-box"><span class="num">5</span><span class="label">themes found</span></div>
+                </div>
+                <p style="font-size:12px; font-family:var(--font-code); color:#aaa;">Tools: Reddit API (PRAW) &nbsp;·&nbsp; Python &nbsp;·&nbsp; JSON / CSV &nbsp;·&nbsp; Manual theme clustering</p>
+            </section>
+
+            <!-- 04 Insights -->
+            <section class="section" id="insights">
+                <p class="section-label">04 — Core Finding</p>
+                <h2>Five ways the same test fails the same people.</h2>
+                <p>Every cluster pointed to a different dimension of the same core problem: a product that asks you to fit into its structure instead of adapting to you.</p>
+                <div class="insight-grid">
+                    <div class="insight-card">
+                        <div class="num">01</div>
+                        <h4>Inconsistency</h4>
+                        <p class="quote">"I've taken this four times and gotten a different type each time. How am I supposed to trust it?"</p>
+                        <span class="insight-text">Test is mood-dependent, not personality-dependent.</span>
+                    </div>
+                    <div class="insight-card">
+                        <div class="num">02</div>
+                        <h4>Forced Choice</h4>
+                        <p class="quote">"The questions never give me an option that fits. I just pick whichever is least wrong."</p>
+                        <span class="insight-text">Binary questions suppress nuanced answers entirely.</span>
+                    </div>
+                    <div class="insight-card">
+                        <div class="num">03</div>
+                        <h4>Lack of Nuance</h4>
+                        <p class="quote">"I'm so much more than INTJ. That label doesn't capture how I actually think."</p>
+                        <span class="insight-text">Users want spectrums and percentages, not binary buckets.</span>
+                    </div>
+                    <div class="insight-card">
+                        <div class="num">04</div>
+                        <h4>Static Labels</h4>
+                        <p class="quote">"I'm completely different at work than with friends. Which one do I answer for?"</p>
+                        <span class="insight-text">Personality is context-dependent and evolves over time.</span>
+                    </div>
+                    <div class="insight-card" style="grid-column: 1 / -1;">
+                        <div class="num">05</div>
+                        <h4>Credibility Gap</h4>
+                        <p class="quote">"I know it's not real science but I can't stop taking it. It's just fun to talk about."</p>
+                        <span class="insight-text">No product has bridged the gap between social entertainment and scientific credibility. People want something that is both shareable and trustworthy.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 05 Personas -->
+            <section class="section" id="personas">
+                <p class="section-label">05 — Who We're Building For</p>
+                <h2>Three people. Three distinct jobs to be done.</h2>
+                <div class="persona-grid">
+                    <div class="persona-card">
+                        <div class="persona-name">Emma</div>
+                        <div class="persona-type">The Self-Explorer · Age 22–30</div>
+                        <p class="persona-quote">"I want to understand who I truly am — not just a four-letter code someone else assigned me."</p>
+                        <div class="jtbd">When I'm feeling lost about who I am, I want to articulate my thoughts clearly, so I can feel understood and validated.</div>
+                    </div>
+                    <div class="persona-card">
+                        <div class="persona-name">Jason</div>
+                        <div class="persona-type">The Skeptic · Age 25–40</div>
+                        <p class="persona-quote">"MBTI is pseudoscience — I need something real before I'll trust it with anything important."</p>
+                        <div class="jtbd">When someone suggests a test, I want to see evidence behind the result, so I can trust it enough to act on it.</div>
+                    </div>
+                    <div class="persona-card">
+                        <div class="persona-name">Amy</div>
+                        <div class="persona-type">The Social Sharer · Age 16–24</div>
+                        <p class="persona-quote">"Personality content is fun — I love sharing it. I just want something that actually feels like me."</p>
+                        <div class="jtbd">When I discover something true about myself, I want to share it in a way that feels unique, so I can connect with people who get it.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 06 Competitive -->
+            <section class="section" id="competitive">
+                <p class="section-label">06 — Market Thinking</p>
+                <h2>A crowded market with the same blind spot.</h2>
+                <p>Every competitor uses forced-choice input and produces a one-time static result. The market is large but the core experience is stagnant.</p>
+                <table class="comp-table">
+                    <thead>
+                        <tr>
+                            <th>Competitor</th>
+                            <th>Input</th>
+                            <th>Free</th>
+                            <th>Consistency</th>
+                            <th>AI / NLP</th>
+                            <th>Evolves</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>16Personalities <span style="font-size:11px;color:#aaa;font-family:var(--font-code)">(18M+ visits/mo)</span></td>
+                            <td>Forced choice</td>
+                            <td>Yes</td>
+                            <td>Low</td>
+                            <td><span class="dot-no">✕</span></td>
+                            <td><span class="dot-no">✕</span></td>
+                        </tr>
+                        <tr>
+                            <td>Official MBTI <span style="font-size:11px;color:#aaa;font-family:var(--font-code)">($49.95/test)</span></td>
+                            <td>Forced choice</td>
+                            <td>No</td>
+                            <td>Medium</td>
+                            <td><span class="dot-no">✕</span></td>
+                            <td><span class="dot-no">✕</span></td>
+                        </tr>
+                        <tr>
+                            <td>Crystal Knows <span style="font-size:11px;color:#aaa;font-family:var(--font-code)">(B2B)</span></td>
+                            <td>LinkedIn + quiz</td>
+                            <td>Partial</td>
+                            <td>Medium</td>
+                            <td>Partial</td>
+                            <td><span class="dot-no">✕</span></td>
+                        </tr>
+                        <tr>
+                            <td>Truity TypeFinder</td>
+                            <td>Forced choice</td>
+                            <td>Basic</td>
+                            <td>Medium</td>
+                            <td><span class="dot-no">✕</span></td>
+                            <td><span class="dot-no">✕</span></td>
+                        </tr>
+                        <tr class="highlight">
+                            <td>MyAnswers</td>
+                            <td>Free text</td>
+                            <td>Yes</td>
+                            <td>Higher</td>
+                            <td><span class="dot-yes">✓</span> LLM</td>
+                            <td><span class="dot-yes">✓</span> V2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 07 Solution -->
+            <section class="section" id="solution">
+                <p class="section-label">07 — The Product</p>
+                <h2>Replace the test. Replace the label.</h2>
+                <p>MyAnswers removes the forced-choice question entirely. Instead of asking "are you more A or B?", it asks you to describe yourself in your own words — then uses NLP and LLM analysis to identify personality traits from how you actually express yourself.</p>
+                <p>The result is a trait gradient across eight dimensions, a confidence score, and an interpretation in the user's own voice. In V2, results accumulate into something closer to a personal autobiography.</p>
+                <div class="version-grid">
+                    <div class="version-card">
+                        <h4>Version 1 — The Chatbot</h4>
+                        <ul>
+                            <li>Colorful, illustrated interface</li>
+                            <li>8 open free-text questions</li>
+                            <li>AI reveals MBTI type + trait breakdown</li>
+                            <li>"16 personalities, 4 worlds" concept</li>
+                            <li>Shareable personality card (PNG)</li>
+                        </ul>
+                    </div>
+                    <div class="version-card">
+                        <h4>Version 2 — The Book</h4>
+                        <ul>
+                            <li>Dark editorial — black and gold aesthetic</li>
+                            <li>Users "open the book" to begin</li>
+                            <li>Chat within chapters of their life</li>
+                            <li>Results appear as diary entries</li>
+                            <li>Personal autobiography grows over time</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Figma Prototypes -->
+            <div class="figma-embed">
+                <div class="figma-embed-label">V1 Prototype — Live Preview</div>
+                <div class="figma-frame">
+                    <iframe src="https://lime-charm-23839631.figma.site" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <!-- 08 Iteration -->
+            <section class="section" id="iteration">
+                <p class="section-label">08 — PM Thinking</p>
+                <h2>What V1 taught us about what people actually want.</h2>
+                <p>V1 validated the core thesis: people engage deeply with a free-text personality experience. The chatbot proved the input model worked — users wrote thoughtfully, NLP surfaced genuine insights, and the shareable output created social traction.</p>
+                <p>But it revealed a tension. The one-shot experience still felt like a transaction. Users got their result and left. The product answered "who am I?" once, then had nothing more to offer.</p>
+                <p style="font-style:italic; border-left: 2px solid #ccc; padding-left: 16px; color: #555; margin: 28px 0;">"The best version of this product isn't a test you take once. It's a mirror you return to — something that grows with you as you do."</p>
+                <div class="version-grid">
+                    <div class="version-card">
+                        <h4>Design Changes</h4>
+                        <ul>
+                            <li>Colorful + playful → dark + editorial</li>
+                            <li>Chatbot interface → book / diary</li>
+                            <li>Single results screen → ongoing diary</li>
+                            <li>Share card → personal autobiography</li>
+                        </ul>
+                    </div>
+                    <div class="version-card">
+                        <h4>Product Changes</h4>
+                        <ul>
+                            <li>One-time test → longitudinal profile</li>
+                            <li>8 questions → life chapters</li>
+                            <li>Static result → evolving portrait</li>
+                            <li>Social sharing → personal reflection</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 09 Metrics -->
+            <section class="section" id="metrics">
+                <p class="section-label">09 — Business Thinking</p>
+                <h2>How success is defined and measured.</h2>
+                <p>The MVP objective is to validate demand for AI-based personality analysis. These metrics are designed to answer one question: do people find this more accurate and engaging than what already exists?</p>
+                <div class="kpi-grid">
+                    <div class="kpi-card"><div class="kpi-label">Activation Rate</div><div class="kpi-val">30–45%</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Session Duration</div><div class="kpi-val">2–4 min</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Day 1 Retention</div><div class="kpi-val">20–25%</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Day 7 Retention</div><div class="kpi-val">8–12%</div></div>
+                    <div class="kpi-card"><div class="kpi-label">AI Processing Success</div><div class="kpi-val">95%+</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Model Latency</div><div class="kpi-val">&lt; 5s</div></div>
+                </div>
+            </section>
+
+            <!-- 10 Reflections -->
+            <section class="section" id="reflections">
+                <p class="section-label">10 — Self-Awareness</p>
+                <h2>What I'd do differently.</h2>
+                <p>This project is honest about what it is: a research-backed, prototype-validated product concept built without a team, budget, or live users.</p>
+                <ul class="reflection-list">
+                    <li>
+                        <span class="r-num">01</span>
+                        <span class="r-text"><strong>Real user interviews would have sharpened the personas.</strong> Reddit research is powerful for identifying problems at scale, but even three 20-minute conversations would have given me quotes I could trust over assumptions I had to make.</span>
+                    </li>
+                    <li>
+                        <span class="r-num">02</span>
+                        <span class="r-text"><strong>The NLP model needs validation before it earns the credibility claim.</strong> The core promise is that free-text analysis is more accurate than forced choice. I've designed for that claim — I haven't proven it yet.</span>
+                    </li>
+                    <li>
+                        <span class="r-num">03</span>
+                        <span class="r-text"><strong>The V1 → V2 pivot happened on instinct, not data.</strong> The Book concept emerged from a design intuition, not user feedback on V1. In a real environment, I'd want lightweight usability testing before committing to a full redesign.</span>
+                    </li>
+                    <li>
+                        <span class="r-num">04</span>
+                        <span class="r-text"><strong>Phases 4–6 of the PM lifecycle remain unstarted.</strong> Build plan, GTM strategy, analytics instrumentation — none exist yet. The portfolio version of this project is honest about that gap rather than pretending it doesn't exist.</span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- 11 What's Next -->
+            <section class="section" id="next">
+                <p class="section-label">11 — Forward Thinking</p>
+                <h2>Where this goes from here.</h2>
+                <p>If I were taking this to production, the next three phases would look like this.</p>
+                <div class="phases-grid">
+                    <div class="phase-card">
+                        <h4>Phase 4 — Build</h4>
+                        <ul>
+                            <li>NLP model v1 training</li>
+                            <li>Backend API for trait scoring</li>
+                            <li>Beta user recruitment (50)</li>
+                            <li>QA and edge case testing</li>
+                            <li>Privacy and consent flow</li>
+                        </ul>
+                    </div>
+                    <div class="phase-card">
+                        <h4>Phase 5 — Launch</h4>
+                        <ul>
+                            <li>Closed beta via Reddit</li>
+                            <li>Landing page + waitlist</li>
+                            <li>Analytics instrumentation</li>
+                            <li>TikTok content seeding</li>
+                            <li>Feedback collection loop</li>
+                        </ul>
+                    </div>
+                    <div class="phase-card">
+                        <h4>Phase 6 — Grow</h4>
+                        <ul>
+                            <li>KPI dashboard live</li>
+                            <li>A/B test V1 vs V2 retention</li>
+                            <li>Context modes (Work / Social)</li>
+                            <li>Voice input exploration</li>
+                            <li>Roadmap v2 from data</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-item"><b>Email</b><span>cj2752@columbia.edu</span></div>
+            <div class="footer-item"><b>Instagram</b><span>@salmonpinkrose</span></div>
+            <div class="footer-item"><b>LinkedIn</b><a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color:#666;text-decoration:none;">linkedin.com/in/chengru-ju-</a></div>
+            <div class="footer-item"><b>Rights</b><span>Sonnet 5 by William Shakespeare</span></div>
+        </div>
+    </footer>
+
+    <script>
+        // Active TOC highlighting on scroll
+        const sections = document.querySelectorAll('.section[id]');
+        const tocLinks = document.querySelectorAll('.toc a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                if (window.scrollY >= section.offsetTop - 80) {
+                    current = section.getAttribute('id');
+                }
+            });
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

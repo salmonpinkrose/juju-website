@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CJ's Works</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=AR+One+Sans&family=Noto+Sans+HK&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F2F2F1;
+            --text: #666666;
+        }
+
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; height: 100%; overflow-x: hidden; }
+
+        body {
+            background: var(--bg);
+            color: #000;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        /* ── NAV ── */
+        .nav {
+            width: 100%;
+            max-width: 1200px;
+            margin: 10px auto 0;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .page-title {
+            font-family: "Special Elite", serif;
+            font-size: 48px;
+            font-weight: bold;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            font-family: "AR One Sans", sans-serif;
+        }
+
+        .nav-links a {
+            color: #999;
+            transition: all 0.2s ease;
+            display: inline-block;
+            transform-origin: bottom center;
+        }
+
+        .nav-links a:hover { color: #333; }
+        .nav-links a:active { color: #ccc; transform: perspective(500px) rotateX(60deg) skewX(-15deg); }
+
+        /* ── SPACER pushes footer to bottom ── */
+        .spacer { flex: 1; }
+
+        /* ── CANVAS ── */
+        #canvas-container {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            z-index: 2;
+            pointer-events: auto;
+        }
+
+        /* ── GALLERIES ── */
+        .gallery {
+            position: fixed;
+            left: 0;
+            right: 0;
+            display: none;
+            padding: 0 40px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .gallery.show {
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+            pointer-events: auto;
+            opacity: 1;
+        }
+
+        /* Project cards */
+        .project-card {
+            flex: 1;
+            padding: 28px 28px 24px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 2px;
+            background: var(--bg);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            cursor: default;
+            animation: cardDrop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        }
+
+        .project-card:nth-child(1) { animation-delay: 0.05s; }
+        .project-card:nth-child(2) { animation-delay: 0.15s; }
+        .project-card:nth-child(3) { animation-delay: 0.25s; }
+
+        @keyframes cardDrop {
+            from { opacity: 0; transform: translateY(-16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .gallery.show:hover .project-card { opacity: 0.4; }
+        .gallery.show .project-card:hover { opacity: 1 !important; }
+
+        .project-card.has-link { cursor: pointer; }
+
+        .card-index {
+            font-size: 11px;
+            font-family: "AR One Sans", sans-serif;
+            color: #bbb;
+            margin-bottom: 12px;
+        }
+
+        .card-name {
+            font-family: "Special Elite", serif;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-arrow {
+            font-size: 14px;
+            opacity: 0;
+            transform: translateX(-4px);
+            transition: all 0.2s;
+            font-family: "AR One Sans", sans-serif;
+        }
+
+        .project-card.has-link:hover .card-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .card-desc {
+            font-family: "Special Elite", serif;
+            font-size: 12px;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 16px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            font-family: "AR One Sans", sans-serif;
+            font-size: 10px;
+            color: #888;
+            border: 1px solid #ccc;
+            border-radius: 50px;
+            padding: 2px 10px;
+        }
+
+        .card-meta {
+            font-family: "AR One Sans", sans-serif;
+            font-size: 11px;
+            color: #aaa;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid rgba(0,0,0,0.06);
+            padding-top: 12px;
+            margin-top: 4px;
+        }
+
+        .card-badge {
+            font-family: "AR One Sans", sans-serif;
+            font-size: 10px;
+            color: #bbb;
+            border: 1px dashed #ccc;
+            border-radius: 50px;
+            padding: 2px 10px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        /* ── WAVE HINT ── */
+        #wave-hint {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: "AR One Sans", sans-serif;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #aaa;
+            pointer-events: none;
+            z-index: 150;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+        }
+
+        #wave-hint.visible { opacity: 1; }
+
+        /* ── FOOTER ── */
+        footer {
+            border-top: 1px solid rgba(0,0,0,0.08);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            background: var(--bg);
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px 28px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            font-size: 13px;
+            color: #666;
+            font-family: "AR One Sans", sans-serif;
+        }
+
+        .footer-item b { display: block; font-weight: 500; margin-bottom: 6px; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .page-title { font-size: 32px; }
+            .gallery.show { flex-direction: column; gap: 12px; padding: 0 16px; }
+            .project-card { padding: 20px; }
+            .footer-inner { grid-template-columns: 1fr 1fr; row-gap: 16px; font-size: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links { gap: 16px; font-size: 12px; }
+            .page-title { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav">
+        <h1 class="page-title">Works.</h1>
+        <nav class="nav-links">
+            <a href="./index.html">Sketchbook</a>
+            <a href="./works.html">Works</a>
+            <a href="./experience.html">Experience</a>
+            <a href="./reflections.html">Reflections</a>
+            <a href="./about.html">About</a>
+        </nav>
+    </div>
+
+    <!-- Canvas for waves -->
+    <div id="canvas-container"></div>
+
+    <!-- Wave hint -->
+    <div id="wave-hint">click a wave to explore</div>
+
+    <!-- Gallery: Independent AI Lab -->
+    <div class="gallery" id="gallery-lab">
+        <div class="project-card has-link" onclick="window.location='./myanswers.html'">
+            <div class="card-index">01</div>
+            <div class="card-name">MyAnswers <span class="card-arrow">→</span></div>
+            <p class="card-desc">AI personality discovery through conversation, not checkboxes. Replaces the forced-choice test with free-text input and the label with a story.</p>
+            <div class="card-tags">
+                <span class="tag">AI / LLM</span>
+                <span class="tag">Product</span>
+                <span class="tag">UX Research</span>
+            </div>
+            <div class="card-meta"><span>2024 — Ongoing</span><span>PM + Builder</span></div>
+        </div>
+        <a href="./weski.html" class="project-card has-link" style="text-decoration:none; color:inherit; display:block; cursor:pointer;">
+            <div class="card-index">02</div>
+            <div class="card-name">WeSkí <span class="card-arrow">→</span></div>
+            <p class="card-desc">A ski community built on the idea that some loves deserve infrastructure. Finding your people on the slope.</p>
+            <div class="card-tags">
+                <span class="tag">Community</span>
+                <span class="tag">Mobile</span>
+            </div>
+            <div class="card-meta"><span>2025 — Ongoing</span><span>Founder</span></div>
+        </a>
+        <div class="project-card">
+            <div class="card-index">03</div>
+            <div class="card-name">CAD Tool for Mom</div>
+            <p class="card-desc">A tool for my mother, an architecture designer — turning old layout photos into editable CAD files, one memory at a time.</p>
+            <div class="card-tags">
+                <span class="tag">Computer Vision</span>
+                <span class="tag">Tooling</span>
+            </div>
+            <div class="card-meta"><span>2025 — Ongoing</span><span>PM + Builder</span></div>
+            <div class="card-badge">Case study coming soon</div>
+        </div>
+    </div>
+
+    <!-- Gallery: Case Studies -->
+    <div class="gallery" id="gallery-cs">
+        <div class="project-card">
+            <div class="card-index">01</div>
+            <div class="card-name">AI Model Comparison</div>
+            <p class="card-desc">Head-to-head analysis of Gemini, Claude, DeepSeek, and Cursor — evaluating reasoning, coding, creative output, and where each fits in a real product workflow.</p>
+            <div class="card-tags">
+                <span class="tag">AI</span>
+                <span class="tag">Analysis</span>
+            </div>
+            <div class="card-meta"><span>2025</span><span>Research</span></div>
+            <div class="card-badge">Writing in progress</div>
+        </div>
+        <div class="project-card">
+            <div class="card-index">02</div>
+            <div class="card-name">TikTok — A Product Teardown</div>
+            <p class="card-desc">An inside look at what makes TikTok's product so unusually effective — the algorithm, the loop, the onboarding, and the decisions most PMs miss.</p>
+            <div class="card-tags">
+                <span class="tag">Product</span>
+                <span class="tag">Consumer</span>
+            </div>
+            <div class="card-meta"><span>2025</span><span>Analysis</span></div>
+            <div class="card-badge">Writing in progress</div>
+        </div>
+        <div class="project-card">
+            <div class="card-index">03</div>
+            <div class="card-name">The Last Moat</div>
+            <p class="card-desc">How prompting-as-building is reshaping who gets to make software — the function shift, the speed, and the privacy questions nobody is asking loudly enough.</p>
+            <div class="card-tags">
+                <span class="tag">AI</span>
+                <span class="tag">Essay</span>
+                <span class="tag">Privacy</span>
+            </div>
+            <div class="card-meta"><span>2025</span><span>Essay</span></div>
+            <div class="card-badge">Writing in progress</div>
+        </div>
+    </div>
+
+    <div class="spacer"></div>
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-item"><b>Email</b>cj2752@columbia.edu</div>
+            <div class="footer-item"><b>Instagram</b>@salmonpinkrose</div>
+            <div class="footer-item"><b>LinkedIn</b><a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color:#666;">linkedin.com/in/chengru-ju-</a></div>
+            <div class="footer-item"><b>Rights</b>Sonnet 5 by William Shakespeare</div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script>
+        let config = {
+            topBoundary: 100,
+            riseSpeed: 0.1,
+            fallSpeed: 4.5,
+            lineGapInitial: 90,
+            lineGapCompressed: 60,
+            paddingBottom: 170,
+            trailDensity: 12,
+            waveCurvature: 2,
+            textGapRatio: 1.3,
+            closingSpeed: 0.15,
+        };
+
+        let waves = [];
+        let rainDrops = [];
+        let activeWaveIdx = -1;
+        let hasBeenClicked = false;
+        let scaleFactor = 1;
+        let currentDisplayedId = -1;
+        let isMobileMode = false;
+
+        const galleryLab = document.getElementById('gallery-lab');
+        const galleryCs  = document.getElementById('gallery-cs');
+
+        const LABELS = ["Independent AI Lab", "Case Studies"];
+        const RAIN_POEM = "Those hours that with gentle work did frame The lovely gaze where every eye doth dwell Will play the tyrants to the very same And that unfair which fairly doth excel For never-resting time leads summer on To hideous winter and confounds him there Sap check'd with frost and lusty leaves quite gone Beauty o'ersnow'd and bareness every where";
+        const RAIN_CHARS = RAIN_POEM.replace(/\s+/g, '').split('');
+        let rainPoemIdx = 0;
+
+        class RainDrop {
+            constructor(bottomY) {
+                this.reset(bottomY);
+            }
+            reset(bottomY) {
+                this.x = random(width);
+                this.y = random(-40, 0);
+                this.vy = random(0.4, 1.2) * scaleFactor;
+                this.vx = random(-0.2, 0.2) * scaleFactor;
+                this.char = RAIN_CHARS[rainPoemIdx % RAIN_CHARS.length];
+                rainPoemIdx++;
+                this.size = random(10, 18) * scaleFactor;
+                this.maxOp = random(80, 160);
+                this.op = 0;
+                this.noiseSeed = random(1000);
+                this.bottomY = bottomY;
+            }
+            update(bottomY) {
+                this.bottomY = bottomY;
+                let breeze = map(noise(this.noiseSeed, frameCount * 0.008), 0, 1, -0.3, 0.3);
+                this.vx += breeze * 0.04;
+                this.vx *= 0.98;
+                this.x += this.vx;
+                this.y += this.vy;
+                // Fade in at top, fade out near bottom
+                let topFade    = map(this.y, -60, 80, 0, 1, true);
+                let bottomFade = map(this.y, bottomY - 120, bottomY, 1, 0, true);
+                this.op = this.maxOp * topFade * bottomFade;
+            }
+            display() {
+                push();
+                noStroke();
+                fill(40, this.op);
+                textSize(this.size);
+                textAlign(CENTER, CENTER);
+                text(this.char, this.x, this.y);
+                pop();
+            }
+            isDead() { return this.y > this.bottomY; }
+        }
+
+        // ── Wave class ──
+        class Wave {
+            constructor(y, txt, id) {
+                this.homeY = y;
+                this.currentY = y;
+                this.txt = txt;
+                this.id = id;
+                this.state = 'IDLE';
+                this.displayOpacity = 255;
+                this.currentTextScale = 1.0;
+                this.waterTrails = [];
+                this.noiseSeed = random(1000);
+                this.centerX = [width * 0.35, width * 0.65][id];
+                this.textBaseWidth = 0;
+            }
+
+            measureText() {
+                textSize(isMobileMode ? 14 : 16 * scaleFactor);
+                this.textBaseWidth = textWidth(this.txt) * config.textGapRatio;
+            }
+
+            update() {
+                if (activeWaveIdx !== -1 && activeWaveIdx !== this.id) {
+                    this.displayOpacity = lerp(this.displayOpacity, 0, 0.15);
+                } else {
+                    this.displayOpacity = lerp(this.displayOpacity, 255, 0.1);
+                }
+
+                if (this.state === 'RISING') {
+                    this.currentY = lerp(this.currentY, config.topBoundary * scaleFactor, config.riseSpeed);
+                    this.currentTextScale = lerp(this.currentTextScale, 0, config.closingSpeed);
+                    this.generateTrails();
+                    hideAllGalleries();
+                    currentDisplayedId = -1;
+                    if (this.currentY <= config.topBoundary * scaleFactor + 2) {
+                        this.state = 'FALLING';
+                    }
+                } else if (this.state === 'FALLING') {
+                    this.currentY = lerp(this.currentY, this.homeY, 0.08);
+                    if (this.currentY > this.homeY - 150 * scaleFactor) {
+                        this.currentTextScale = lerp(this.currentTextScale, 1.0, 0.08);
+                    }
+                    let fallProgress = (this.currentY - config.topBoundary * scaleFactor) /
+                                       (this.homeY - config.topBoundary * scaleFactor);
+                    fallProgress = constrain(fallProgress, 0, 1);
+                    if (fallProgress > 0.3) showGallery(this.id);
+
+                    if (abs(this.currentY - this.homeY) < 1.0) {
+                        this.currentY = this.homeY;
+                        this.state = 'IDLE';
+                        activeWaveIdx = -1;
+                        currentDisplayedId = this.id;
+                        showGallery(this.id);
+                    }
+                } else {
+                    this.currentY = lerp(this.currentY, this.homeY, 0.1);
+                    this.currentTextScale = lerp(this.currentTextScale, 1.0, 0.1);
+                    if (this.id === currentDisplayedId) showGallery(this.id);
+                }
+
+                for (let i = this.waterTrails.length - 1; i >= 0; i--) {
+                    let t = this.waterTrails[i];
+                    t.y += t.speed * scaleFactor;
+                    t.opacity -= 3;
+                    if (t.opacity <= 0) this.waterTrails.splice(i, 1);
+                }
+            }
+
+            display() {
+                if (this.displayOpacity < 5) return;
+                push();
+
+                for (let t of this.waterTrails) {
+                    stroke(180, 190, 200, t.opacity * (this.displayOpacity / 255));
+                    strokeWeight(t.thickness * scaleFactor);
+                    line(t.x, t.y, t.x, t.y + t.len * scaleFactor);
+                }
+
+                for (let i = 0; i < 2; i++) {
+                    let yOff = i * 4 * scaleFactor;
+                    let alpha = i === 0 ? 255 : 80;
+                    stroke(0, alpha * (this.displayOpacity / 255));
+                    strokeWeight(i === 0 ? 1.5 * scaleFactor : 0.8 * scaleFactor);
+                    noFill();
+                    this.drawWave(yOff);
+                }
+
+                let gapWidth = this.textBaseWidth * this.currentTextScale;
+                if (gapWidth > 0.5) {
+                    noStroke();
+                    fill(242, 242, 241);
+                    rectMode(CENTER);
+                    rect(this.centerX, this.currentY + 2 * scaleFactor, gapWidth, 20 * scaleFactor);
+                }
+
+                if (this.currentTextScale > 0.02) {
+                    push();
+                    translate(this.centerX, this.currentY + 2 * scaleFactor);
+                    scale(this.currentTextScale, 1.0);
+                    noStroke();
+                    fill(0, this.displayOpacity * Math.pow(this.currentTextScale, 1.5));
+                    textAlign(CENTER, CENTER);
+                    textSize(isMobileMode ? 14 : 16 * scaleFactor);
+                    text(this.txt, 0, 0);
+                    pop();
+                }
+
+                pop();
+            }
+
+            drawWave(yOffset) {
+                beginShape();
+                let gapHalf = (this.textBaseWidth * this.currentTextScale) / 2;
+                curveVertex(-20, this.currentY + yOffset);
+                for (let x = 0; x <= width; x += 15 * scaleFactor) {
+                    let nx = x * 0.004 / scaleFactor;
+                    let noiseVal = noise(nx + frameCount * (0.003 + this.id * 0.001), this.noiseSeed + yOffset);
+                    let baseMod = map(noiseVal, 0, 1, -25, 25) * config.waveCurvature * scaleFactor;
+                    let distToCenter = abs(x - this.centerX);
+                    let taper = map(distToCenter, gapHalf * 0.5, gapHalf * 1.5, 0, 1, true);
+                    if (this.currentTextScale < 0.1) taper = 1;
+                    curveVertex(x, this.currentY + yOffset + baseMod * taper);
+                }
+                curveVertex(width + 20, this.currentY + yOffset);
+                endShape();
+            }
+
+            generateTrails() {
+                for (let i = 0; i < config.trailDensity; i++) {
+                    let rx = random(0, width);
+                    let gapHalf = (this.textBaseWidth * this.currentTextScale) / 2;
+                    if (rx > this.centerX - gapHalf && rx < this.centerX + gapHalf) continue;
+                    this.waterTrails.push({
+                        x: rx,
+                        y: this.currentY + random(-5, 5) * scaleFactor,
+                        len: random(30, 80),
+                        speed: random(4, 8),
+                        thickness: random(0.5, 1.8),
+                        opacity: random(100, 200)
+                    });
+                }
+            }
+
+            checkClick(mx, my) {
+                if (activeWaveIdx === -1 && abs(my - this.currentY) < 35 * scaleFactor) {
+                    this.state = 'RISING';
+                    activeWaveIdx = this.id;
+                    hasBeenClicked = true;
+                    for (let i = 0; i < 60; i++) this.generateTrails();
+                }
+            }
+        }
+
+        // ── Gallery helpers ──
+        function hideAllGalleries() {
+            [galleryLab, galleryCs].forEach(g => {
+                if (g) { g.classList.remove('show'); g.style.display = 'none'; }
+            });
+            // restore wave click-ability
+            const cc = document.getElementById('canvas-container');
+            if (cc) cc.style.pointerEvents = 'auto';
+        }
+
+        function showGallery(id) {
+            const targets = [galleryLab, galleryCs];
+            targets.forEach((g, i) => {
+                if (!g) return;
+                if (i === id) {
+                    if (g.style.display !== 'flex') {
+                        g.style.display = 'flex';
+                        void g.offsetWidth;
+                        g.classList.add('show');
+                    }
+                } else {
+                    g.classList.remove('show');
+                    g.style.display = 'none';
+                }
+            });
+            // allow gallery cards to receive clicks; canvas only handles wave zone
+            const cc = document.getElementById('canvas-container');
+            if (cc) cc.style.pointerEvents = 'none';
+        }
+
+        function positionHint() {
+            if (!waves.length) return;
+            const canvasEl = document.querySelector('#canvas-container canvas');
+            if (!canvasEl) return;
+            const rect = canvasEl.getBoundingClientRect();
+            const firstWave = waves[0];
+            const scaleY = rect.height / height;
+            const hintY = rect.top + firstWave.currentY * scaleY - 28;
+            const hint = document.getElementById('wave-hint');
+            if (hint) hint.style.top = Math.max(80, hintY) + 'px';
+        }
+
+        function positionGalleries() {
+            const isMobile = windowWidth <= 480;
+            const isTablet = windowWidth > 480 && windowWidth <= 1200;
+
+            let canvasW = windowWidth;
+            let canvasH = isMobile ? 500 : canvasW * (623 / 1280) - 20;
+
+            let lastLineY = canvasH - config.paddingBottom * scaleFactor;
+            let gapNow = hasBeenClicked ? config.lineGapCompressed : config.lineGapInitial;
+            let firstLineY = lastLineY - (1 * gapNow * scaleFactor); // 2 waves, gap between
+
+            let canvasTop;
+            if (isTablet) {
+                canvasTop = window.innerHeight - canvasH - 10;
+            } else if (!isMobile) {
+                canvasTop = 40;
+            } else {
+                canvasTop = window.innerHeight - canvasH;
+            }
+
+            const navEl = document.querySelector('.nav');
+            const navBottom = navEl ? navEl.getBoundingClientRect().bottom + window.scrollY + 16 : 80;
+            const waveTop = canvasTop + firstLineY;
+            const availH = waveTop - navBottom - 16;
+
+            [galleryLab, galleryCs].forEach(g => {
+                if (!g) return;
+                g.style.top = navBottom + 'px';
+                g.style.height = Math.max(80, availH) + 'px';
+                g.style.alignItems = 'flex-start';
+            });
+        }
+
+        // ── p5 setup ──
+        function setup() {
+            isMobileMode = windowWidth <= 480;
+            let isTabletMode = windowWidth > 480 && windowWidth <= 1200;
+
+            let cW = windowWidth;
+            let cH = isMobileMode ? 500 : cW * (623 / 1280) - 20;
+
+            if (isMobileMode) {
+                config.lineGapInitial = 100;
+                config.lineGapCompressed = 70;
+                config.paddingBottom = 200;
+                config.textGapRatio = 1.0;
+            } else if (isTabletMode) {
+                config.paddingBottom = 110;
+                config.lineGapInitial = 90;
+                config.lineGapCompressed = 65;
+            }
+
+            let canvas = createCanvas(cW, cH);
+            canvas.parent('canvas-container');
+
+            const container = document.getElementById('canvas-container');
+            if (isMobileMode) {
+                container.style.bottom = '0';
+                container.style.top = 'auto';
+            } else if (isTabletMode) {
+                container.style.top = (window.innerHeight - cH - 10) + 'px';
+            } else {
+                container.style.top = '40px';
+            }
+
+            scaleFactor = isMobileMode ? 0.6 : cW / 1280;
+            textFont('Special Elite');
+
+            buildWaves(cH);
+            positionGalleries();
+            positionHint();
+        }
+
+        function buildWaves(cH) {
+            waves = [];
+            let lastY = cH - config.paddingBottom * scaleFactor;
+            let firstY = lastY - config.lineGapInitial * scaleFactor;
+
+            for (let i = 0; i < LABELS.length; i++) {
+                let y = firstY + i * config.lineGapInitial * scaleFactor;
+                let w = new Wave(y, LABELS[i], i);
+                w.measureText();
+                waves.push(w);
+            }
+        }
+
+        function updateHomePositions() {
+            let gap = hasBeenClicked ? config.lineGapCompressed : config.lineGapInitial;
+            let lastY = height - config.paddingBottom * scaleFactor;
+            let firstY = lastY - gap * scaleFactor;
+            for (let i = 0; i < waves.length; i++) {
+                waves[i].homeY = firstY + i * gap * scaleFactor;
+            }
+        }
+
+        function draw() {
+            clear();
+            updateHomePositions();
+
+            // ── Letter rain ──
+            if (waves.length) {
+                let bottomY = height * 0.67;
+                // Spawn new drops
+                if (frameCount % 2 === 0) {
+                    rainDrops.push(new RainDrop(bottomY));
+                }
+                // Update + draw + cull
+                for (let i = rainDrops.length - 1; i >= 0; i--) {
+                    rainDrops[i].update(bottomY);
+                    rainDrops[i].display();
+                    if (rainDrops[i].isDead()) {
+                        rainDrops[i].reset(bottomY);
+                    }
+                }
+                // Cap pool size
+                if (rainDrops.length > 300) rainDrops.splice(0, rainDrops.length - 300);
+            }
+
+            for (let w of waves) { w.update(); w.display(); }
+
+            // Pointer cursor + hint when near a wave
+            const canvasEl = document.querySelector('#canvas-container canvas');
+            const hint = document.getElementById('wave-hint');
+            if (canvasEl) {
+                let nearWave = waves.some(w => abs(mouseY - w.currentY) < 40 * scaleFactor);
+                canvasEl.style.cursor = nearWave ? 'pointer' : 'default';
+                if (hint) {
+                    if (nearWave) hint.classList.add('visible');
+                    else hint.classList.remove('visible');
+                }
+            }
+
+            positionHint();
+        }
+
+        function mousePressed() {
+            for (let w of waves) w.checkClick(mouseX, mouseY);
+            // re-enable canvas pointer events briefly to allow wave clicks
+            const cc = document.getElementById('canvas-container');
+            if (cc) cc.style.pointerEvents = 'auto';
+        }
+
+        function windowResized() {
+            isMobileMode = windowWidth <= 480;
+            let isTabletMode = windowWidth > 480 && windowWidth <= 1200;
+
+            let cW = windowWidth;
+            let cH = isMobileMode ? 500 : cW * (623 / 1280) - 20;
+
+            if (isMobileMode) {
+                config.lineGapInitial = 100; config.lineGapCompressed = 70; config.paddingBottom = 200;
+            } else if (isTabletMode) {
+                config.paddingBottom = 110; config.lineGapInitial = 90; config.lineGapCompressed = 65;
+            } else {
+                config.paddingBottom = 170; config.lineGapInitial = 90; config.lineGapCompressed = 60;
+            }
+
+            resizeCanvas(cW, cH);
+            scaleFactor = isMobileMode ? 0.6 : cW / 1280;
+
+            const container = document.getElementById('canvas-container');
+            if (isMobileMode) {
+                container.style.bottom = '0'; container.style.top = 'auto';
+            } else if (isTabletMode) {
+                container.style.top = (window.innerHeight - cH - 10) + 'px';
+            } else {
+                container.style.top = '40px';
+            }
+
+            rainDrops = [];
+            buildWaves(cH);
+            positionGalleries();
+        }
+    </script>
+</body>
+</html>
