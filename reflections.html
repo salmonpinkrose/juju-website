@@ -184,6 +184,15 @@
             margin: 0;
         }
 
+        .entry-section-heading {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 28px 0 10px;
+        }
+
         /* Footer */
         footer {
             border-top: 1px solid rgba(0,0,0,0.08);
@@ -241,9 +250,21 @@
             <aside class="toc">
                 <p class="toc-label">Entries</p>
                 <div class="toc-list">
+                    <a href="#building-in-public" class="toc-item">
+                        <span class="toc-date">Oct 2025</span>
+                        <span class="toc-title">On Building in Public</span>
+                    </a>
                     <a href="#weski" class="toc-item">
                         <span class="toc-date">Nov 2025</span>
                         <span class="toc-title">Why I Built WeSkí</span>
+                    </a>
+                    <a href="#autonomy" class="toc-item">
+                        <span class="toc-date">Dec 2025</span>
+                        <span class="toc-title">On Autonomy in the Age of AI</span>
+                    </a>
+                    <a href="#prd" class="toc-item">
+                        <span class="toc-date">Jan 2026</span>
+                        <span class="toc-title">Is the PRD Dead?</span>
                     </a>
                     <a href="#rumination" class="toc-item">
                         <span class="toc-date">Feb 2026</span>
@@ -255,14 +276,51 @@
             <!-- Entries -->
             <section class="entry-list">
 
+                <div class="entry" id="building-in-public">
+                    <div class="entry-meta">
+                        <span class="entry-date">Oct 2025</span>
+                        <span class="entry-tag">Building</span>
+                    </div>
+                    <div class="entry-body">
+                        <h2 class="entry-title"><a href="./reflection-building-in-public.html" style="color:inherit;text-decoration:none;">On Building in Public</a></h2>
+                        <p class="entry-excerpt">I used to have a rule for my ideas: don't start until you're ready. Ready meant knowing how to design it properly. Knowing how to build the frontend and the backend. The rule kept me very organized and completely stuck.</p>
+                        <a href="./reflection-building-in-public.html" style="font-size:12px; font-family:var(--font-code); color:#aaa; text-decoration:none; border-bottom:1px solid #ddd;">Read →</a>
+                    </div>
+                </div>
+
                 <div class="entry" id="weski">
                     <div class="entry-meta">
                         <span class="entry-date">Nov 2025</span>
                         <span class="entry-tag">Origin</span>
                     </div>
                     <div class="entry-body">
-                        <h2 class="entry-title">Why I Built WeSkí</h2>
-                        <p class="entry-excerpt">I'm a skier. Every day before a trip — sometimes just out of habit — I'm bouncing between apps. OpenSnow for the forecast. Xiaohongshu to see where people are actually going. WeChat Moments to catch what friends posted from the mountain. Instagram for photos. Facebook Marketplace when I need gear. It's a lot of tabs, a lot of switching, a lot of context you lose between them. At some point I got tired of it and thought: why isn't there one place for all of this? That was the idea. Not a grand thesis about the future of sports communities — just a skier who wanted his morning routine to take five minutes instead of forty.</p>
+                        <h2 class="entry-title"><a href="./reflection-weski.html" style="color:inherit;text-decoration:none;">Why I Built WeSkí</a></h2>
+                        <p class="entry-excerpt">I'm a skier. Every day before a trip — sometimes just out of habit — I'm bouncing between apps. OpenSnow for the forecast. Xiaohongshu to see where people are actually going. At some point I got tired of it and thought: why isn't there one place for all of this?</p>
+                        <a href="./reflection-weski.html" style="font-size:12px; font-family:var(--font-code); color:#aaa; text-decoration:none; border-bottom:1px solid #ddd;">Read →</a>
+                    </div>
+                </div>
+
+                <div class="entry" id="autonomy">
+                    <div class="entry-meta">
+                        <span class="entry-date">Dec 2025</span>
+                        <span class="entry-tag">AI</span>
+                    </div>
+                    <div class="entry-body">
+                        <h2 class="entry-title"><a href="./reflection-autonomy.html" style="color:inherit;text-decoration:none;">On Autonomy (自主性) in the Age of AI</a></h2>
+                        <p class="entry-excerpt">There is a concept I keep returning to as I build: 自主性 — autonomy. Not in the sense of independence for its own sake, but in the deeper sense of being the initiating force behind your own direction. Of not waiting.</p>
+                        <a href="./reflection-autonomy.html" style="font-size:12px; font-family:var(--font-code); color:#aaa; text-decoration:none; border-bottom:1px solid #ddd;">Read →</a>
+                    </div>
+                </div>
+
+                <div class="entry" id="prd">
+                    <div class="entry-meta">
+                        <span class="entry-date">Jan 2026</span>
+                        <span class="entry-tag">Product</span>
+                    </div>
+                    <div class="entry-body">
+                        <h2 class="entry-title"><a href="./reflection-prd.html" style="color:inherit;text-decoration:none;">Is the PRD Dead?</a></h2>
+                        <p class="entry-excerpt">Last Friday, after watching the Fortinet Founders Cup LPGA Tour, a few friends and I ended up at a bar in Palo Alto. One in consulting, one in finance, one in tech — different industries, same conversation. Junior roles are quietly disappearing.</p>
+                        <a href="./reflection-prd.html" style="font-size:12px; font-family:var(--font-code); color:#aaa; text-decoration:none; border-bottom:1px solid #ddd;">Read →</a>
                     </div>
                 </div>
 
@@ -272,11 +330,9 @@
                         <span class="entry-tag">Thought</span>
                     </div>
                     <div class="entry-body">
-                        <h2 class="entry-title">On Rumination</h2>
-                        <p class="entry-excerpt">I recently came across a few words I hadn't really sat with before: rumination, neuroplasticity, mindfulness.<br><br>
-                        Rumination is what happens when your brain gets stuck replaying something — a conversation you had, a decision you regret, something you're anxious about that hasn't even happened yet. I'd always thought of that as just "overthinking." But apparently it's not harmless. That loop, when it runs long enough, actually wears down the neural pathways involved — the mental equivalent of a record scratch that keeps skipping. Some research suggests chronic rumination can be harder to climb out of than depression itself, because at least with depression you know something is wrong. With rumination, it can feel like you're just being thorough.<br><br>
-                        That's where mindfulness comes in — not as a vague wellness concept but as a practical interruption. You notice you're in the loop, and you step out of it. Simple in theory, hard in practice.<br><br>
-                        The part that got me was neuroplasticity. The brain isn't fixed. The way you think — the patterns, the defaults — can actually be reshaped by what you practice. Which means the loops aren't permanent. It's a slow process, but it means the way you tend to think isn't just who you are. It's what you've been doing.</p>
+                        <h2 class="entry-title"><a href="./reflection-rumination.html" style="color:inherit;text-decoration:none;">On Rumination</a></h2>
+                        <p class="entry-excerpt">I recently came across a few words I hadn't really sat with before: rumination, neuroplasticity, mindfulness. Rumination is what happens when your brain gets stuck replaying something — a conversation you had, a decision you regret, something you're anxious about that hasn't even happened yet.</p>
+                        <a href="./reflection-rumination.html" style="font-size:12px; font-family:var(--font-code); color:#aaa; text-decoration:none; border-bottom:1px solid #ddd;">Read →</a>
                     </div>
                 </div>
 
@@ -288,15 +344,13 @@
         <div class="footer-inner">
             <div class="footer-item">
                 <b>Email</b>
-                <span>cj2752@columbia.edu</span>
+                <span>chengruju01@gmail.com</span>
             </div>
             <div class="footer-item">
-                <b>Instagram</b>
-                <span>@salmonpinkrose</span>
+                <a href="https://www.instagram.com/salmonpinkrose/" target="_blank" style="color:#666;text-decoration:none;">Instagram ↗</a>
             </div>
             <div class="footer-item">
-                <b>LinkedIn</b>
-                <a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color:#666;text-decoration:none;">linkedin.com/in/chengru-ju-</a>
+                <a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color:#666;text-decoration:none;">LinkedIn ↗</a>
             </div>
             <div class="footer-item">
                 <b>Rights</b>

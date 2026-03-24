@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Is the PRD Dead? — CJ's Reflections</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=AR+One+Sans&family=Noto+Sans+HK&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F2F2F1;
+            --text-color: #000000;
+            --muted-color: #666666;
+            --font-main: "Special Elite", "Noto Sans HK", sans-serif;
+            --font-code: "AR One Sans", sans-serif;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-main); -webkit-font-smoothing: antialiased; }
+        a { color: var(--text-color); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .top-bar {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-link {
+            font-size: 13px;
+            font-family: var(--font-code);
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #333; text-decoration: none; }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            font-family: var(--font-code);
+        }
+        .nav-links a { color: #999; transition: color 0.2s; }
+        .nav-links a:hover { color: #333; text-decoration: none; }
+
+        .article {
+            max-width: 680px;
+            margin: 60px auto 100px;
+            padding: 0 24px;
+        }
+        .article-meta {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        .article-tag {
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            padding: 2px 10px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .article-title {
+            font-size: 32px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            letter-spacing: -0.5px;
+            line-height: 1.25;
+            margin: 0 0 8px;
+        }
+        .article-subtitle {
+            font-size: 15px;
+            font-family: var(--font-main);
+            color: #888;
+            margin: 0 0 40px;
+            line-height: 1.5;
+        }
+        .article-body p {
+            font-size: 15px;
+            line-height: 1.95;
+            color: #333;
+            font-family: var(--font-main);
+            margin: 0 0 20px;
+        }
+        .article-body p:last-child { margin-bottom: 0; }
+        .section-heading {
+            font-size: 13px;
+            font-family: var(--font-main);
+            color: #222;
+            font-weight: bold;
+            margin: 44px 0 14px;
+            line-height: 1.4;
+        }
+        .section-label {
+            display: block;
+            font-size: 10px;
+            font-family: var(--font-code);
+            color: #bbb;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            font-weight: normal;
+        }
+
+        footer { border-top: 1px solid rgba(0,0,0,0.08); margin-top: 24px; }
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px 28px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            font-size: 13px;
+            color: #666;
+            font-family: var(--font-code);
+        }
+        .footer-item b { display: block; font-weight: 500; margin-bottom: 6px; color: #666; }
+
+        @media (max-width: 768px) { .article { margin-top: 40px; } .article-title { font-size: 24px; } }
+        @media (max-width: 480px) { .nav-links { gap: 16px; font-size: 12px; } .footer-inner { grid-template-columns: 1fr 1fr; row-gap: 16px; font-size: 12px; } }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="./reflections.html" class="back-link">← Reflections</a>
+        <nav class="nav-links">
+            <a href="./index.html">Sketchbook</a>
+            <a href="./works.html">Works</a>
+            <a href="./experience.html">Experience</a>
+            <a href="./reflections.html">Reflections</a>
+            <a href="./about.html">About</a>
+        </nav>
+    </div>
+
+    <article class="article">
+        <div class="article-meta">
+            <span>Jan 2026</span>
+            <span class="article-tag">Product</span>
+            <span>by Chengru Ju</span>
+        </div>
+        <h1 class="article-title">Is the PRD Dead?</h1>
+        <p class="article-subtitle">On What It Means to Be a PM in the Age of AI</p>
+
+        <div class="article-body">
+            <p>Last Friday, after watching the Fortinet Founders Cup LPGA Tour, a few friends and I ended up at a bar in Palo Alto. One in consulting, one in finance, one in tech — different industries, same conversation. Junior roles are quietly disappearing. Not because companies are struggling — many are doing fine. The better word for it is 优化 (streamlining, optimisation). Companies have realised they don't need as many people to produce the same output, and unlike a downturn, that calculation doesn't reverse when conditions improve. The jobs aren't coming back. And that's what makes the 焦虑 (anxiety — a particular kind of low-grade dread) in the industry feel different this time — there's no obvious floor, no recovery narrative to hold onto. I felt it sitting there. I still feel it, even as someone who builds with AI every day.</p>
+
+            <p class="section-heading">
+                <span class="section-label">01</span>
+                "Every PM will be an AI PM" is the beginning of the answer, not the end
+            </p>
+            <p>The reflex response to all of this is: retrain, adopt AI tools, become an AI-native PM. And yes — that's necessary. But framing it as an evolution, like how PMs eventually learned to use data or adopted agile, undersells how discontinuous this actually is. The PMs who come out of this well won't be the ones who added AI to how they already work. They'll be the ones who tore the workflow apart and rebuilt it around what AI can do.</p>
+            <p>That's a harder ask than learning a new tool — it means letting go of habits that made you good, workflows you spent years refining, instincts that feel like professional identity. And the uncomfortable truth is that experienced PMs often struggle with this more than junior ones do. Less to unlearn is a real advantage. I catch myself defaulting to old patterns constantly — writing a long document when I could just build the thing. The awareness doesn't make it automatic. That's the work.</p>
+
+            <p class="section-heading">
+                <span class="section-label">02</span>
+                The PM's job was translation — and that job is contracting
+            </p>
+            <p>The traditional PM sat between users, business, and engineering and converted messy human context into clear executable direction. The PRD was the artifact of that role — it existed because someone had to do the translation carefully enough that a team could build without the PM in every room. AI is absorbing that work. Specs draft themselves. Engineers prototype their own ideas. The translation layer that the PM role was built around is collapsing, and no amount of process improvement changes that trajectory.</p>
+            <p>What's left when the translation is gone isn't nothing — it's the part that was always harder to articulate and harder to automate. Judgment. Context. The ability to figure out what's actually worth building before anyone else has named it as a problem.</p>
+
+            <p class="section-heading">
+                <span class="section-label">03</span>
+                Breadth gets you in the room. Depth gets you trusted.
+            </p>
+            <p>The future PM needs to be genuinely cross-functional — enough sales instinct to understand what the market will bear, enough systems thinking to pressure-test an architecture decision, enough design sensibility to give feedback that moves a conversation forward. That's the baseline. But the thing I keep observing is that the PMs with real influence at serious product companies aren't the ones with the widest coverage. They're the ones who went deep enough in one domain — usually data, sometimes research, sometimes the technical model itself — to have conversations that engineers and researchers actually trust. Not performing expertise. Genuinely following the reasoning.</p>
+            <p>Broad enough to work across everything, but specific enough somewhere that people want your opinion on the hard questions. That combination is rarer than either one alone.</p>
+
+            <p class="section-heading">
+                <span class="section-label">04</span>
+                Stop calling it soft skills — it's institutional intelligence, and it's the hardest thing to build
+            </p>
+            <p>Every time someone says soft skills will matter more in the AI era, I know what they mean, but the framing does the idea a disservice. What they're actually describing is institutional intelligence — knowing how a specific organisation really makes decisions, not how the org chart says it does. Where the actual authority sits. What failed six months ago that nobody documented but everyone remembers. Which relationships need to be maintained for a cross-functional initiative to survive contact with reality.</p>
+            <p>This knowledge takes years to build, it doesn't transfer when you change companies, and it is almost impossible to automate — because it isn't an information problem. It's a presence problem. It requires being a person in rooms with other people over time, accumulating the kind of relational credibility that makes people willing to follow an uncertain direction. The PMs who have it are the ones who seem to make things happen without obvious effort. The ones who don't are technically competent and somehow never quite have impact. That gap is institutional intelligence. It is not soft.</p>
+
+            <p class="section-heading">
+                <span class="section-label">05</span>
+                The PRD is two documents that share a name, and only one of them is dying
+            </p>
+            <p>The confusion around this question is causing real problems in the industry, so let me be specific. The PRD as a synchronisation document — the handoff spec that exists so an engineering team can build without you in every room — is dying. When I can build a working prototype in an afternoon that shows exactly what I mean, that prototype carries more information than any document I could write, and it arrives faster and breaks less.</p>
+            <p>The PRD as a thinking tool — the document you write to force clarity on your own reasoning before you act — is not dying and never will be. If anything, it's more valuable now, because the speed of AI-assisted building means you can get to a prototype so fast that you skip the thinking entirely if you're not careful. The discipline of writing down what you're building, why, for whom, and how you'll know if it worked is worth preserving. Just stop writing it for the engineering team. Write it for yourself.</p>
+
+            <p class="section-heading">
+                <span class="section-label">06</span>
+                The real bottleneck isn't what PMs need to become — it's what companies need to change
+            </p>
+            <p>Here's the part that most PM writing leaves out, and I think it's the most important part. Everything I've described — rebuilding your workflow, developing institutional intelligence, going deep in one domain, thinking rather than translating — requires an environment that recognises and rewards those things. Most don't, yet. Most product organisations are still measuring PMs on delivery velocity, stakeholder satisfaction, and whether they shipped on time. These aren't wrong things to value, but they are the artifacts of a world where execution was the scarce resource. When AI handles the execution, you're now selecting and rewarding for exactly the skills that are being automated — and quietly failing to develop the ones that aren't.</p>
+            <p>The companies that restructure around judgment rather than output will pull ahead. That means evaluating PMs on the quality of the problems they identify, not just the solutions they ship. It means giving PMs the expectation — not just permission — to build directly. And it means rewarding the PM who pushes back before the metrics confirm they were right, not after. That contribution is invisible until it isn't.</p>
+            <p>Right now, most organisations are not set up to see it. That gap — between what the best PMs should be building in themselves and what most companies are actually selecting for — is the most important unresolved tension in the industry. The tools are changing fast. The structures are changing slowly. A lot of good thinking dies in that gap.</p>
+            <p>The tools buy you time. What you do with that time — and where you choose to spend it — is the actual question.</p>
+        </div>
+    </article>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-item"><b>Email</b><span>chengruju01@gmail.com</span></div>
+            <div class="footer-item"><a href="https://www.instagram.com/salmonpinkrose/" target="_blank" style="color:#666;text-decoration:none;">Instagram ↗</a></div>
+            <div class="footer-item"><a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color:#666;text-decoration:none;">LinkedIn ↗</a></div>
+            <div class="footer-item"><b>Rights</b><span>Sonnet 5 by William Shakespeare</span></div>
+        </div>
+    </footer>
+</body>
+</html>

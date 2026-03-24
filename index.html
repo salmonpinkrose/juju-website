@@ -210,6 +210,7 @@
             <div class="intro-top">
                 <h1>Hi,</h1>
                 <h2>This Is Chengru Ju's Sketchbook.</h2>
+                <p class="intro-bio" style="font-family:'Special Elite',serif; font-size:15px; line-height:1.9; color:#666; margin:16px 0 0; max-width:480px;">PM and builder working at the intersection of AI and human behavior. Most of my work starts with a question about why people do what they do — and ends with something you can actually use. I'm drawn to the gap between what people say they need and what they actually feel. That gap is usually where the product lives.</p>
             </div>
             <div class="intro-cta">
                 <p>Let's Flip Through It.</p>
@@ -232,15 +233,13 @@
         <div class="footer-inner">
             <div class="footer-item">
                 <b>Email</b>
-                cj2752@columbia.edu
+                chengruju01@gmail.com
             </div>
             <div class="footer-item">
-                <b>Instagram</b>
-                @salmonpinkrose
+                <a href="https://www.instagram.com/salmonpinkrose/" target="_blank" style="color: var(--text); text-decoration: none;">Instagram ↗</a>
             </div>
             <div class="footer-item">
-                <b>LinkedIn</b>
-                <a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color: var(--text); text-decoration: none;">linkedin.com/in/chengru-ju-</a>
+                <a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color: var(--text); text-decoration: none;">LinkedIn ↗</a>
             </div>
             <div class="footer-item">
                 <b>Rights</b>
@@ -438,7 +437,8 @@
             const targets = [
                 { sel: '.intro-top h1', baseDelay: 0.1 },
                 { sel: '.intro-top h2', baseDelay: 0.2 },
-                { sel: '.intro-cta p', baseDelay: 2 }
+                { sel: '.intro-bio', baseDelay: 1.2 },
+                { sel: '.intro-cta p', baseDelay: 9 }
             ];
             targets.forEach(target => {
                 const el = document.querySelector(target.sel);

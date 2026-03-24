@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On Building in Public — CJ's Reflections</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=AR+One+Sans&family=Noto+Sans+HK&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F2F2F1;
+            --text-color: #000000;
+            --muted-color: #666666;
+            --font-main: "Special Elite", "Noto Sans HK", sans-serif;
+            --font-code: "AR One Sans", sans-serif;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-main); -webkit-font-smoothing: antialiased; }
+        a { color: var(--text-color); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .top-bar {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-link {
+            font-size: 13px;
+            font-family: var(--font-code);
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #333; text-decoration: none; }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            font-family: var(--font-code);
+        }
+        .nav-links a { color: #999; transition: color 0.2s; }
+        .nav-links a:hover { color: #333; text-decoration: none; }
+
+        .article {
+            max-width: 680px;
+            margin: 60px auto 100px;
+            padding: 0 24px;
+        }
+        .article-meta {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        .article-tag {
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            padding: 2px 10px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .article-title {
+            font-size: 32px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            letter-spacing: -0.5px;
+            line-height: 1.25;
+            margin: 0 0 40px;
+        }
+        .article-body p {
+            font-size: 15px;
+            line-height: 1.95;
+            color: #333;
+            font-family: var(--font-main);
+            margin: 0 0 20px;
+        }
+        .article-body p:last-child { margin-bottom: 0; }
+        .section-heading {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 40px 0 12px;
+        }
+
+        footer { border-top: 1px solid rgba(0,0,0,0.08); margin-top: 24px; }
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px 28px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            font-size: 13px;
+            color: #666;
+            font-family: var(--font-code);
+        }
+        .footer-item b { display: block; font-weight: 500; margin-bottom: 6px; color: #666; }
+
+        @media (max-width: 768px) { .article { margin-top: 40px; } .article-title { font-size: 24px; } }
+        @media (max-width: 480px) { .nav-links { gap: 16px; font-size: 12px; } .footer-inner { grid-template-columns: 1fr 1fr; row-gap: 16px; font-size: 12px; } }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="./reflections.html" class="back-link">← Reflections</a>
+        <nav class="nav-links">
+            <a href="./index.html">Sketchbook</a>
+            <a href="./works.html">Works</a>
+            <a href="./experience.html">Experience</a>
+            <a href="./reflections.html">Reflections</a>
+            <a href="./about.html">About</a>
+        </nav>
+    </div>
+
+    <article class="article">
+        <div class="article-meta">
+            <span>Oct 2025</span>
+            <span class="article-tag">Building</span>
+            <span>by Chengru Ju</span>
+        </div>
+        <h1 class="article-title">On Building in Public</h1>
+        <div class="article-body">
+            <p>I used to have a rule for my ideas: don't start until you're ready. Ready meant knowing how to design it properly. Knowing how to build the frontend and the backend. Knowing how to deploy it. Knowing enough to feel like you weren't wasting anyone's time.</p>
+            <p>The rule kept me very organized and completely stuck.</p>
+
+            <p class="section-heading">Learning in public</p>
+            <p>Following builders like <a href="https://x.com/zarazhangrui" target="_blank" style="border-bottom:1px solid #ccc;">Zara Zhang</a> changed how I thought about this. She builds in public — shares the messy middle, not just the finished result. She talks about shipping something imperfect and letting the feedback from real users teach you things no amount of planning could. That's not a shortcut. That's a better process.</p>
+            <p>Vibe coding removed the last technical barrier. What used to require a team — design, engineering, deployment — I can now do alone, in an afternoon, with an idea and a conversation. The projects in this portfolio exist because that became true.</p>
+
+            <p class="section-heading">What building taught me that studying never could</p>
+            <p>There is a category of knowledge that only exists on the other side of doing. You can read every product management framework, memorize every prioritization matrix, and still not know what it actually feels like to watch a user interact with something you made — and realize in real time that you built the wrong thing. Learning while building is not a compromise. It is the most efficient path to the kind of judgment that actually matters in product work.</p>
+            <p>Friction reveals truth. The moment you try to build something, every vague assumption becomes a concrete decision. You can't write a PRD about a feature you don't fully understand. But you can build a prototype and immediately see where the thinking breaks down.</p>
+            <p>Iteration speed compounds. The faster you can move from idea to testable artifact, the more cycles of learning you accumulate. Vibe coding didn't just lower the barrier to building — it compressed the feedback loop between thinking and knowing.</p>
+            <p>Doing in public accelerates both. Every post, every shipped prototype, every honest update invites feedback that no internal review ever would.</p>
+
+            <p class="section-heading">Why I found it hard — and why I'm changing that</p>
+            <p>The conventional wisdom used to be the opposite of what it is today. Stealth was the default posture for early-stage products — the logic being that if you showed your hand too early, a well-resourced competitor would simply out-execute you before you had a chance to establish ground. That logic has largely inverted. X has become the most concentrated gathering of builders, thinkers, and early adopters in the world. Andrej Karpathy posts his thinking in real time. Founders share architectural decisions before they've fully made them. The most brilliant people in AI, product, and design are operating almost entirely in the open — and the network effects of that transparency are compounding in ways that secrecy never could.</p>
+            <p>I understood all of this intellectually. I still found it difficult.</p>
+            <p>Two things held me back. The confidence gap: there is a real psychological cost to putting unfinished work in front of people who might judge it. I was afraid of the comment that would confirm what I already feared — that the idea wasn't good enough, that the execution was amateur, that I had miscalculated what was interesting or useful. That fear is not irrational. But it is the wrong unit of analysis. The question isn't whether the work is good enough to show. The question is whether keeping it private makes it better. Almost always, it doesn't.</p>
+            <p>The second was undervaluing early feedback. I treated user feedback as something you earn after you've shipped a polished product. In reality, early-stage feedback — messy, contradictory, sometimes harsh — is the highest-signal input a PM can receive. It arrives before you've over-invested in the wrong direction. It reveals the gap between what you think you built and what someone actually experiences.</p>
+
+            <p class="section-heading">What I'm choosing now</p>
+            <p>What Zara Zhang articulated clearly — and what I've internalized slowly — is that influence and credibility in public don't arrive suddenly. They accumulate. Every post, every shipped prototype, every honest update about what worked and what didn't is a deposit into something that compounds gradually and then all at once. Waiting until everything is ready means waiting indefinitely, because nothing is ever completely ready.</p>
+            <p>I'm embedding a different set of defaults. Ship early. Write about it. Share what's working and what isn't. Let the feedback reshape the direction. Treat public building not as a performance of confidence I don't yet have, but as the mechanism through which that confidence is actually built.</p>
+            <p>The projects in this portfolio are the beginning of that practice. They are not finished. Some of the assumptions in them are wrong. The roadmaps will change. I'm posting anyway — because the version of this work that exists after a hundred real interactions will be worth far more than the version I could have produced alone.</p>
+        </div>
+    </article>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-item"><b>Email</b><span>chengruju01@gmail.com</span></div>
+            <div class="footer-item"><a href="https://www.instagram.com/salmonpinkrose/" target="_blank" style="color:#666;text-decoration:none;">Instagram ↗</a></div>
+            <div class="footer-item"><a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color:#666;text-decoration:none;">LinkedIn ↗</a></div>
+            <div class="footer-item"><b>Rights</b><span>Sonnet 5 by William Shakespeare</span></div>
+        </div>
+    </footer>
+</body>
+</html>

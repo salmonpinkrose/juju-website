@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why I Built WeSkí — CJ's Reflections</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=AR+One+Sans&family=Noto+Sans+HK&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F2F2F1;
+            --text-color: #000000;
+            --muted-color: #666666;
+            --font-main: "Special Elite", "Noto Sans HK", sans-serif;
+            --font-code: "AR One Sans", sans-serif;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-main); -webkit-font-smoothing: antialiased; }
+        a { color: var(--text-color); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .top-bar {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-link {
+            font-size: 13px;
+            font-family: var(--font-code);
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #333; text-decoration: none; }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            font-family: var(--font-code);
+        }
+        .nav-links a { color: #999; transition: color 0.2s; }
+        .nav-links a:hover { color: #333; text-decoration: none; }
+        .nav-links a:active { color: #ccc; }
+
+        .article {
+            max-width: 680px;
+            margin: 60px auto 100px;
+            padding: 0 24px;
+        }
+        .article-meta {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        .article-tag {
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            padding: 2px 10px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .article-title {
+            font-size: 32px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            letter-spacing: -0.5px;
+            line-height: 1.25;
+            margin: 0 0 40px;
+        }
+        .article-body p {
+            font-size: 15px;
+            line-height: 1.95;
+            color: #333;
+            font-family: var(--font-main);
+            margin: 0 0 20px;
+        }
+        .article-body p:last-child { margin-bottom: 0; }
+
+        footer { border-top: 1px solid rgba(0,0,0,0.08); margin-top: 24px; }
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px 28px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            font-size: 13px;
+            color: #666;
+            font-family: var(--font-code);
+        }
+        .footer-item b { display: block; font-weight: 500; margin-bottom: 6px; color: #666; }
+        .section-heading {
+            font-size: 30px;
+            font-style: italic;
+            font-family: var(--font-main);
+            color: #222;
+            font-weight: bold;
+            margin: 44px 0 14px;
+            line-height: 1.4;
+        }
+        .section-label {
+            display: block;
+            font-size: 10px;
+            font-family: var(--font-code);
+            color: #bbb;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            font-weight: normal;
+        }
+        .obstacle-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .obstacle-list li {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 20px;
+            padding: 20px 0;
+            border-top: 1px solid rgba(0,0,0,0.07);
+            align-items: start;
+        }
+        .obstacle-list li:last-child { border-bottom: 1px solid rgba(0,0,0,0.07); }
+        .obstacle-label {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding-top: 3px;
+        }
+        .obstacle-body {
+            font-size: 15px;
+            line-height: 1.85;
+            color: #333;
+            font-family: var(--font-main);
+        }
+        .obstacle-body strong {
+            display: block;
+            color: #111;
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 768px) { .article { margin-top: 40px; } .article-title { font-size: 24px; } }
+        @media (max-width: 480px) { .nav-links { gap: 16px; font-size: 12px; } .footer-inner { grid-template-columns: 1fr 1fr; row-gap: 16px; font-size: 12px; } }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="./reflections.html" class="back-link">← Reflections</a>
+        <nav class="nav-links">
+            <a href="./index.html">Sketchbook</a>
+            <a href="./works.html">Works</a>
+            <a href="./experience.html">Experience</a>
+            <a href="./reflections.html">Reflections</a>
+            <a href="./about.html">About</a>
+        </nav>
+    </div>
+
+    <article class="article">
+        <div class="article-meta">
+            <span>Nov 2025</span>
+            <span class="article-tag">Origin</span>
+            <span>by Chengru Ju</span>
+        </div>
+        <h1 class="article-title">Why I Built WeSkí</h1>
+        <div class="article-body">
+            <img src="./images/skiing.jpg" alt="CJ skiing" style="width:100%; border-radius:2px; margin-bottom:32px; filter:grayscale(10%);">
+            <p>I'm a skier. Every day before a trip — sometimes just out of habit — I'm bouncing between apps. OpenSnow for the forecast. Xiaohongshu to see where people are actually going. WeChat Moments to catch what friends posted from the mountain. Instagram for photos. Facebook Marketplace when I need gear.</p>
+            <p>It's a lot of tabs, a lot of switching, a lot of context you lose between them. At some point I got tired of it and thought: why isn't there one place for all of this?</p>
+            <p>That was the idea. Not a grand thesis about the future of sports communities — just a skier who wanted his morning routine to take five minutes instead of forty.</p>
+
+            <p class="section-heading">
+                <span class="section-label">01</span>
+                I validated how people report. I never asked if they would.
+            </p>
+            <p>I did the research. I ran A/B tests on how users would report snow conditions — which format felt natural, which flow made sense, which prompt got the most responses. The tests told me something real: people had preferences about how to report. I used that to refine the design.</p>
+            <p>What I didn't test was whether they would report at all.</p>
+            <p>My boyfriend — also a skier — was the first person outside my own head to look at the full prototype. He got it immediately. The concept, the features, the value of having everything in one place. Then he asked: "But why would someone open this app just to report snow conditions?"</p>
+            <p>I didn't have a clean answer. I still don't.</p>
+            <p>The vision behind WeSkí's snow reporting feature is genuinely something I believe in: real crowd-sourced conditions, contributed by people who were just there, unfiltered and timestamped. That data would be more useful than anything a resort publishes. But believing in the value of the data and understanding what motivates someone to contribute it are two different problems — and I had conflated them. I had validated the mechanism while assuming the motivation.</p>
+            <p>Waze works because you're already in traffic when you report it. Yelp works because a strong feeling — love or frustration — pulls a review out of you. What's the skiing equivalent? You've just had a great run. You're cold. Your hands are in gloves. What makes you stop and tell the app?</p>
+            <p>I don't have a satisfying answer yet. But sitting with the question long enough led me somewhere more interesting.</p>
+
+            <p class="section-heading">
+                <span class="section-label">02</span>
+                What if the user never had to report at all?
+            </p>
+            <p>The mistake wasn't asking people to report. The mistake was asking them to report manually. That's the wrong design question entirely.</p>
+            <p>Waze works not because people love pressing a button to report accidents. It works because the behavior of driving already generates the data — your speed, your location, your route — and Waze reads it passively. The contribution is built into the thing you're already doing.</p>
+            <p>Skiers already record everything. GoPro, Insta360, DJI — action cameras are standard gear on the slopes now. Every run, someone is filming. That footage contains exactly what I need: the snow surface, the visibility, the conditions underfoot. A computer vision model could read it. The user wouldn't need to do anything new. The data would come from behavior that already exists.</p>
+            <p>That's a fundamentally different product than "open the app and tap Report." It's passive contribution — and it's a much stronger foundation for a crowdsourced data system.</p>
+
+            <p class="section-heading">
+                <span class="section-label">03</span>
+                Three ways to get there — each with a problem I haven't solved yet.
+            </p>
+            <p>The idea is clean in principle. The implementation is where it gets complicated.</p>
+            <ul class="obstacle-list">
+                <li>
+                    <span class="obstacle-label">Latency</span>
+                    <span class="obstacle-body"><strong>Cameras are offline on the mountain.</strong> The footage lives on the device until the skier gets back to the lodge and connects to wifi. Real-time reporting is gone. But near-real-time might still be valuable — a condition report from two hours ago is more useful than yesterday's official grooming update. The question is whether that delay breaks the use case.</span>
+                </li>
+                <li>
+                    <span class="obstacle-label">Album Access</span>
+                    <span class="obstacle-body"><strong>Users might grant photo access — but only if the value exchange is clear.</strong> This is a permission design problem as much as a technical one. Trust has to be established before someone hands over their camera roll. Solvable, but it takes time to earn.</span>
+                </li>
+                <li>
+                    <span class="obstacle-label">Social Layer</span>
+                    <span class="obstacle-body"><strong>Instagram's API has been locked down since 2018.</strong> People post ski content constantly, but pulling that data programmatically isn't available. That door is mostly closed unless users manually connect accounts and explicitly share. Not impossible — but not the frictionless integration I was imagining.</span>
+                </li>
+            </ul>
+            <p>What these obstacles point to is a harder question: who owns the data pipeline? Camera → device → WeSkí is one path. Camera → Instagram → WeSkí is another. Each has different friction, different latency, different trust requirements. I haven't resolved which one is right — or whether the answer is something else entirely.</p>
+            <p>What I do know is that I started building around the wrong question. "How should users report snow conditions" assumed that manual reporting was the model. The better question — the one I should have asked first — is what data already exists in what skiers naturally do, and how close can I get to that without asking for anything new. The answer to that question is where the real product lives.</p>
+        </div>
+    </article>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-item"><b>Email</b><span>chengruju01@gmail.com</span></div>
+            <div class="footer-item"><a href="https://www.instagram.com/salmonpinkrose/" target="_blank" style="color:#666;text-decoration:none;">Instagram ↗</a></div>
+            <div class="footer-item"><a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color:#666;text-decoration:none;">LinkedIn ↗</a></div>
+            <div class="footer-item"><b>Rights</b><span>Sonnet 5 by William Shakespeare</span></div>
+        </div>
+    </footer>
+</body>
+</html>

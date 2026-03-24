@@ -1159,9 +1159,10 @@
             <a href="#userflow">10 — User Flow</a>
             <a href="#metrics">11 — Metrics</a>
             <a href="#reflections">12 — Reflections</a>
-            <a href="#bmodel">13 — Business Model</a>
-            <a href="#next">14 — What's Next</a>
-            <a href="#demo">15 — Demo</a>
+            <a href="#pipeline">13 — Data Pipeline Rethink</a>
+            <a href="#bmodel">14 — Business Model</a>
+            <a href="#next">15 — What's Next</a>
+            <a href="#demo">16 — Demo</a>
         </aside>
 
         <!-- Content -->
@@ -1728,30 +1729,51 @@
             <section class="section" id="reflections">
                 <p class="section-label">12 — Self-Awareness</p>
                 <h2>What I'd do differently.</h2>
-                <p>This project is honest about what it is: a research-backed, prototype-validated product concept built without a team, budget, or live users. The research is hypothetical but grounded in real PM methodology.</p>
-                <ul class="reflection-list">
-                    <li>
-                        <span class="r-num">01</span>
-                        <span class="r-text"><strong>The hardest part isn't getting people to report — it's getting them to trust what they read.</strong> I underestimated the trust design challenge. Users will submit 38-second reports. But will a stranger in Denver trust a report from a stranger in Tahoe? The trust score system is a hypothesis I haven't fully validated yet.</span>
-                    </li>
-                    <li>
-                        <span class="r-num">02</span>
-                        <span class="r-text"><strong>I'd build the Community Captain program before writing a single line of code.</strong> The data flywheel needs supply before demand. Recruiting 3 instructors per resort to commit to daily reporting during beta is the right first move — and it required no product at all, just a WhatsApp group and a promise.</span>
-                    </li>
-                    <li>
-                        <span class="r-num">03</span>
-                        <span class="r-text"><strong>The 3-tap form emerged from failure, not foresight.</strong> I designed a 12-field report form because I wanted rich data. Testing killed it. The lesson: optimize for completion first. A 3-tap report that gets submitted 100 times is more valuable than a 12-field report that gets submitted 4 times.</span>
-                    </li>
-                    <li>
-                        <span class="r-num">04</span>
-                        <span class="r-text"><strong>International expansion is a phase 3 problem I'm treating like a phase 1 vision.</strong> Japan, the Alps, New Zealand — these are real markets. But the conditions flywheel only works when there are enough reporters at a given resort. I need to nail Tahoe before I think about Niseko.</span>
-                    </li>
-                </ul>
+                <div style="margin: 24px 0; display: flex; flex-direction: column; gap: 0;">
+                    <div style="display: grid; grid-template-columns: 140px 1fr; gap: 24px; padding: 18px 0; border-top: 1px solid rgba(0,0,0,0.07);">
+                        <span style="font-size:11px; font-family:var(--font-code); color:#aaa; letter-spacing:1px; text-transform:uppercase; padding-top:3px;">Trust</span>
+                        <span style="font-size:14px; line-height:1.85; color:#444; font-family:var(--font-main);"><strong style="color:#111; display:block; margin-bottom:3px;">Getting people to report is easier than getting strangers to trust what they read.</strong>The trust score system is a hypothesis. Will a skier in Denver trust a report from someone they've never met in Tahoe? Not validated yet.</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 140px 1fr; gap: 24px; padding: 18px 0; border-top: 1px solid rgba(0,0,0,0.07);">
+                        <span style="font-size:11px; font-family:var(--font-code); color:#aaa; letter-spacing:1px; text-transform:uppercase; padding-top:3px;">Supply First</span>
+                        <span style="font-size:14px; line-height:1.85; color:#444; font-family:var(--font-main);"><strong style="color:#111; display:block; margin-bottom:3px;">I'd recruit Community Captains before writing a single line of code.</strong>The data flywheel needs supply before demand. 3 instructors per resort committing to daily reporting during beta — no product needed, just a WhatsApp group and a promise.</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 140px 1fr; gap: 24px; padding: 18px 0; border-top: 1px solid rgba(0,0,0,0.07);">
+                        <span style="font-size:11px; font-family:var(--font-code); color:#aaa; letter-spacing:1px; text-transform:uppercase; padding-top:3px;">Form Design</span>
+                        <span style="font-size:14px; line-height:1.85; color:#444; font-family:var(--font-main);"><strong style="color:#111; display:block; margin-bottom:3px;">12 fields → 3 taps. Optimize for completion, not richness.</strong>A 3-tap report submitted 100 times beats a 12-field form submitted 4 times. Testing killed the long form. The lesson arrived later than it should have.</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 140px 1fr; gap: 24px; padding: 18px 0; border-top: 1px solid rgba(0,0,0,0.07); border-bottom: 1px solid rgba(0,0,0,0.07);">
+                        <span style="font-size:11px; font-family:var(--font-code); color:#aaa; letter-spacing:1px; text-transform:uppercase; padding-top:3px;">Scope</span>
+                        <span style="font-size:14px; line-height:1.85; color:#444; font-family:var(--font-main);"><strong style="color:#111; display:block; margin-bottom:3px;">Nail Tahoe before thinking about Niseko.</strong>International expansion is a phase 3 problem I was treating like a phase 1 vision. The flywheel only works when there are enough reporters at a single resort first.</span>
+                    </div>
+                </div>
             </section>
 
-            <!-- 13 Business Model -->
+            <!-- 13 Data Pipeline Rethink -->
+            <section class="section" id="pipeline">
+                <p class="section-label">13 — PM Thinking</p>
+                <h2>The data pipeline problem: why manual reporting doesn't work.</h2>
+                <p>Crowdsourced snow conditions only work if people report. Manual reporting requires motivation that doesn't naturally exist — opening an app mid-run, on cold hands, for a stranger's benefit. Three approaches to solve this without asking users to do something new:</p>
+                <div style="margin: 28px 0; display: flex; flex-direction: column; gap: 0;">
+                    <div style="display: grid; grid-template-columns: 140px 1fr; gap: 24px; padding: 20px 0; border-top: 1px solid rgba(0,0,0,0.07);">
+                        <span style="font-size:11px; font-family:var(--font-code); color:#aaa; letter-spacing:1px; text-transform:uppercase; padding-top:3px;">Action Cameras</span>
+                        <span style="font-size:14px; line-height:1.85; color:#444; font-family:var(--font-main);"><strong style="color:#111; display:block; margin-bottom:3px;">GoPro / Insta360 / DJI footage analyzed by CV model.</strong>Skiers already record every run. Computer vision reads the snow surface, visibility, and conditions passively — no new behavior required. Constraint: cameras are offline on the mountain, so reporting is near-real-time (~2hr delay), not live.</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 140px 1fr; gap: 24px; padding: 20px 0; border-top: 1px solid rgba(0,0,0,0.07);">
+                        <span style="font-size:11px; font-family:var(--font-code); color:#aaa; letter-spacing:1px; text-transform:uppercase; padding-top:3px;">Photo Album</span>
+                        <span style="font-size:14px; line-height:1.85; color:#444; font-family:var(--font-main);"><strong style="color:#111; display:block; margin-bottom:3px;">Read ski photos from the user's camera roll on upload.</strong>Behavior already exists — skiers photograph conditions constantly. Constraint: requires explicit permission grant; trust and value exchange must be clear before users hand over album access.</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 140px 1fr; gap: 24px; padding: 20px 0; border-top: 1px solid rgba(0,0,0,0.07); border-bottom: 1px solid rgba(0,0,0,0.07);">
+                        <span style="font-size:11px; font-family:var(--font-code); color:#aaa; letter-spacing:1px; text-transform:uppercase; padding-top:3px;">Social Layer</span>
+                        <span style="font-size:14px; line-height:1.85; color:#444; font-family:var(--font-main);"><strong style="color:#111; display:block; margin-bottom:3px;">Pull ski content from Instagram / Xiaohongshu.</strong>Ski content is posted constantly and publicly. Constraint: Instagram's API has been locked since 2018 — programmatic access requires users to manually connect accounts, which reintroduces friction.</span>
+                    </div>
+                </div>
+                <p style="font-size:13px; font-family:var(--font-code); color:#999;">The thinking behind this problem and what it changed about the product → <a href="./reflection-weski.html" style="color:#999; border-bottom:1px solid #ddd;">read the full reflection</a></p>
+            </section>
+
+            <!-- 14 Business Model -->
             <section class="section" id="bmodel">
-                <p class="section-label">13 — Commercial Thinking</p>
+                <p class="section-label">14 — Commercial Thinking</p>
                 <h2>Three paths. No commitment yet.</h2>
                 <p>I haven't locked in a monetization model because it's too early — the right model depends on which user behavior proves stickiest. Here are the three I'm evaluating and what I'd need to learn before choosing.</p>
                 <div class="bmodel-grid">
@@ -1775,7 +1797,7 @@
 
             <!-- 14 What's Next -->
             <section class="section" id="next">
-                <p class="section-label">14 — Forward Thinking</p>
+                <p class="section-label">15 — Forward Thinking</p>
                 <h2>Where this goes from here.</h2>
                 <p>If I were taking this to production, the next three phases would look like this. Phase 3 (Build) doesn't start until Phase 2 validation confirms the concierge test signal holds at a slightly larger scale.</p>
                 <div class="phases-grid">
@@ -1842,7 +1864,7 @@
 
             <!-- 15 Demo -->
             <section class="section" id="demo">
-                <p class="section-label">15 — Interactive Demo</p>
+                <p class="section-label">16 — Interactive Demo</p>
                 <h2>Try the prototype.</h2>
                 <p>A working prototype of the WeSkí MVP — Home Feed, Resort Page (Palisades Tahoe), and the validated 3-step conditions report form. Built in Figma Make. Open on any device and tap through as a real user would.</p>
                 <p>Screens included: Home Feed with community conditions updates &nbsp;·&nbsp; Resort Page with live score, snow type breakdown, trail-level status, and recent reports &nbsp;·&nbsp; Submit Report form (3 steps, glove-friendly, avg 38 seconds to complete).</p>
@@ -1864,9 +1886,9 @@
 
     <footer>
         <div class="footer-inner">
-            <div class="footer-item"><b>Email</b><span>cj2752@columbia.edu</span></div>
-            <div class="footer-item"><b>Instagram</b><span>@salmonpinkrose</span></div>
-            <div class="footer-item"><b>LinkedIn</b><a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color:#666;text-decoration:none;">linkedin.com/in/chengru-ju-</a></div>
+            <div class="footer-item"><b>Email</b><span>chengruju01@gmail.com</span></div>
+            <div class="footer-item"><a href="https://www.instagram.com/salmonpinkrose/" target="_blank" style="color:#666;text-decoration:none;">Instagram ↗</a></div>
+            <div class="footer-item"><a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color:#666;text-decoration:none;">LinkedIn ↗</a></div>
             <div class="footer-item"><b>Rights</b><span>Sonnet 5 by William Shakespeare</span></div>
         </div>
     </footer>
