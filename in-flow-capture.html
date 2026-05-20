@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In-Flow Capture — Case Study</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=AR+One+Sans&family=Noto+Sans+HK&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F2F2F1;
+            --text-color: #000000;
+            --muted-color: #666666;
+            --font-main: "Special Elite", "Noto Sans HK", sans-serif;
+            --font-code: "AR One Sans", sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: var(--text-color); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* ── NAV ── */
+        .top-bar {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            font-size: 13px;
+            font-family: var(--font-code);
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: #333; text-decoration: none; }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            font-family: var(--font-code);
+        }
+
+        .nav-links a {
+            color: #999;
+            transition: all 0.2s ease;
+            display: inline-block;
+            transform-origin: bottom center;
+        }
+
+        .nav-links a:hover { color: #333; text-decoration: none; }
+        .nav-links a:active { color: #ccc; transform: perspective(500px) rotateX(60deg) skewX(-15deg); }
+
+        /* ── LAYOUT ── */
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            margin-top: 48px;
+        }
+
+        /* ── SIDEBAR TOC ── */
+        .toc {
+            position: sticky;
+            top: 32px;
+            height: fit-content;
+        }
+
+        .toc-title {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 16px;
+        }
+
+        .toc a {
+            display: block;
+            font-size: 12px;
+            font-family: var(--font-code);
+            color: #aaa;
+            padding: 5px 0;
+            border-left: 2px solid transparent;
+            padding-left: 12px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .toc a:hover { color: #333; border-left-color: #333; text-decoration: none; }
+        .toc a.active { color: #000; border-left-color: #000; }
+
+        /* ── CONTENT ── */
+        .content { min-width: 0; }
+
+        /* Hero */
+        .hero {
+            margin-bottom: 56px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .hero-label {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            letter-spacing: -1px;
+            margin: 0 0 16px;
+            line-height: 1.1;
+        }
+
+        .hero-sub {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #555;
+            font-family: var(--font-main);
+            max-width: 620px;
+            margin-bottom: 36px;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .meta-item b {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .meta-item span {
+            font-size: 13px;
+            font-family: var(--font-main);
+            color: #333;
+        }
+
+        /* Headline result band (impact-first) */
+        .impact-band {
+            margin-top: 32px;
+            padding: 24px;
+            border: 1px solid #000;
+            border-radius: 2px;
+            background: #fff;
+        }
+
+        .impact-band-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 12px;
+        }
+
+        .impact-band-headline {
+            font-size: 16px;
+            font-family: var(--font-main);
+            color: #000;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .impact-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .impact-stat {
+            border-left: 2px solid #000;
+            padding-left: 12px;
+        }
+
+        .impact-stat .delta {
+            font-size: 22px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+            line-height: 1.1;
+        }
+
+        .impact-stat .desc {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #777;
+            line-height: 1.5;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 72px;
+            scroll-margin-top: 32px;
+        }
+
+        .section-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 8px;
+        }
+
+        .section h2 {
+            font-size: 28px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            letter-spacing: -0.5px;
+            margin: 0 0 24px;
+            line-height: 1.3;
+        }
+
+        .section h3 {
+            font-size: 18px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            letter-spacing: -0.2px;
+            margin: 32px 0 12px;
+        }
+
+        .section p {
+            font-size: 14px;
+            line-height: 1.9;
+            color: #444;
+            font-family: var(--font-main);
+            margin: 0 0 16px;
+            max-width: 680px;
+        }
+
+        .section p:last-child { margin-bottom: 0; }
+
+        .quote-block {
+            font-style: italic;
+            border-left: 2px solid #ccc;
+            padding-left: 16px;
+            color: #555;
+            margin: 28px 0;
+            font-family: var(--font-main);
+            font-size: 14px;
+            line-height: 1.8;
+            max-width: 680px;
+        }
+
+        /* Stats row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .stat-box {
+            padding: 22px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 2px;
+        }
+
+        .stat-box .num {
+            font-size: 28px;
+            font-family: var(--font-main);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+            line-height: 1.1;
+        }
+
+        .stat-box .label {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #888;
+            line-height: 1.5;
+        }
+
+        /* Insight cards */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 28px 0;
+        }
+
+        .insight-card {
+            padding: 22px;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 2px;
+        }
+
+        .insight-card .num {
+            font-size: 11px;
+            letter-spacing: 1px;
+            font-family: var(--font-code);
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .insight-card h4 {
+            font-size: 14px;
+            font-family: var(--font-main);
+            margin: 0 0 8px;
+        }
+
+        .insight-card .insight-text {
+            font-size: 12px;
+            font-family: var(--font-code);
+            color: #777;
+            line-height: 1.7;
+        }
+
+        /* Version comparison (before/after prompt) */
+        .version-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 28px 0;
+        }
+
+        .version-card {
+            padding: 24px;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 2px;
+        }
+
+        .version-card.before { background: rgba(220, 80, 80, 0.03); }
+        .version-card.after { background: rgba(60, 140, 80, 0.03); border-color: rgba(60, 140, 80, 0.25); }
+
+        .version-card h4 {
+            font-size: 13px;
+            font-family: var(--font-code);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #aaa;
+            margin: 0 0 14px;
+            font-weight: 500;
+        }
+
+        .version-card .prompt-text {
+            font-size: 12px;
+            font-family: var(--font-code);
+            color: #444;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            margin: 0;
+        }
+
+        .version-card .prompt-text em {
+            background: rgba(0,0,0,0.06);
+            font-style: normal;
+            padding: 0 3px;
+        }
+
+        /* KPI grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .kpi-card {
+            padding: 18px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 2px;
+        }
+
+        .kpi-card .kpi-label {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            margin-bottom: 6px;
+        }
+
+        .kpi-card .kpi-val {
+            font-size: 18px;
+            font-family: var(--font-main);
+            font-weight: bold;
+        }
+
+        /* Phases */
+        .phases-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 28px 0;
+        }
+
+        .phase-card {
+            padding: 22px;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 2px;
+        }
+
+        .phase-card h4 {
+            font-size: 12px;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaa;
+            margin: 0 0 14px;
+            font-weight: 500;
+        }
+
+        .phase-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .phase-card ul li {
+            font-size: 13px;
+            font-family: var(--font-main);
+            color: #444;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            line-height: 1.6;
+        }
+
+        .phase-card ul li:last-child { border-bottom: none; }
+
+        /* Decision pills */
+        .decision-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0;
+        }
+
+        .decision-list li {
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            display: grid;
+            grid-template-columns: 32px 1fr;
+            gap: 16px;
+        }
+
+        .decision-list li .d-num {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            padding-top: 3px;
+        }
+
+        .decision-list li .d-text {
+            font-size: 14px;
+            font-family: var(--font-main);
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .decision-list li .d-text strong {
+            display: block;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        /* Honest-callout box (for scoping / latency caveats) */
+        .callout {
+            margin: 28px 0;
+            padding: 18px 22px;
+            border: 1px dashed #ccc;
+            border-radius: 2px;
+            background: rgba(0,0,0,0.015);
+        }
+
+        .callout-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 8px;
+        }
+
+        .callout p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        /* Media frame (demo video + mindmap placeholders) */
+        .media-frame {
+            margin: 24px 0 8px;
+        }
+
+        .media-frame-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 10px;
+        }
+
+        .media-box {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            border: 1px dashed #ccc;
+            border-radius: 2px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.02);
+        }
+
+        .media-box .placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+            color: #999;
+            font-family: var(--font-code);
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .media-box .placeholder .ph-sub {
+            margin-top: 8px;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: none;
+            color: #bbb;
+            font-family: var(--font-main);
+        }
+
+        .media-box iframe,
+        .media-box img,
+        .media-box video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border: none;
+            display: block;
+        }
+
+        /* Mindmap wrapper (clean, no dashed border — real content) */
+        .mindmap-wrap {
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 2px;
+            padding: 24px;
+            background: rgba(0,0,0,0.015);
+        }
+
+        /* Article CTA cards (artifacts section) */
+        .article-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 28px 0 16px;
+        }
+
+        .article-card {
+            display: block;
+            padding: 24px;
+            border: 1px solid #000;
+            border-radius: 2px;
+            background: #fff;
+            color: inherit;
+            text-decoration: none !important;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+            text-decoration: none;
+        }
+
+        .article-card .article-card-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin-bottom: 10px;
+        }
+
+        .article-card h4 {
+            font-size: 18px;
+            font-family: var(--font-main);
+            margin: 0 0 10px;
+            line-height: 1.3;
+        }
+
+        .article-card .article-card-desc {
+            font-size: 13px;
+            line-height: 1.7;
+            color: #555;
+            font-family: var(--font-main);
+            margin: 0 0 14px;
+        }
+
+        .article-card .article-card-inside {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #888;
+            margin: 0 0 14px;
+            line-height: 1.7;
+            border-top: 1px dashed rgba(0,0,0,0.08);
+            padding-top: 10px;
+        }
+
+        .article-card .article-card-cta {
+            font-size: 12px;
+            font-family: var(--font-code);
+            color: #000;
+            letter-spacing: 1px;
+        }
+
+        .article-card .article-card-status {
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: var(--font-code);
+            color: #bbb;
+            border: 1px dashed #ccc;
+            border-radius: 50px;
+            padding: 2px 10px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .inventory-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aaa;
+            font-family: var(--font-code);
+            margin: 28px 0 8px;
+        }
+
+        /* Artifact link list */
+        .artifact-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0;
+        }
+
+        .artifact-list li {
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            align-items: baseline;
+        }
+
+        .artifact-list li:last-child { border-bottom: none; }
+
+        .artifact-list li .a-name {
+            font-size: 14px;
+            font-family: var(--font-main);
+            color: #222;
+        }
+
+        .artifact-list li .a-meta {
+            font-size: 11px;
+            font-family: var(--font-code);
+            color: #aaa;
+            letter-spacing: 0.5px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid rgba(0,0,0,0.08);
+            margin-top: 24px;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px 28px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            font-size: 13px;
+            color: #666;
+            font-family: var(--font-code);
+        }
+
+        .footer-item b { display: block; font-weight: 500; margin-bottom: 6px; color: #666; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .page { grid-template-columns: 1fr; }
+            .toc { display: none; }
+            .meta-grid { grid-template-columns: 1fr 1fr; }
+            .impact-stats { grid-template-columns: 1fr 1fr; }
+            .insight-grid { grid-template-columns: 1fr; }
+            .version-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            .phases-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 36px; }
+            .meta-grid { grid-template-columns: 1fr 1fr; }
+            .impact-stats { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: 1fr; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            .footer-inner { grid-template-columns: 1fr 1fr; row-gap: 16px; font-size: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links { gap: 20px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="./works.html" class="back-link">← Works</a>
+        <nav class="nav-links">
+            <a href="./index.html">Sketchbook</a>
+            <a href="./works.html">Works</a>
+            <a href="./experience.html">Experience</a>
+            <a href="./about.html">About</a>
+        </nav>
+    </div>
+
+    <div class="page">
+
+        <!-- TOC -->
+        <aside class="toc">
+            <div class="toc-title">Contents</div>
+            <a href="#demo">01 — Demo</a>
+            <a href="#problem">02 — Problem</a>
+            <a href="#thinking">03 — Thinking</a>
+            <a href="#prd">04 — PRD</a>
+            <a href="#how">05 — How it works</a>
+            <a href="#eval">06 — Evaluation</a>
+            <a href="#next">07 — What's next</a>
+            <a href="#artifacts">08 — Artifacts</a>
+        </aside>
+
+        <!-- Content -->
+        <main class="content">
+
+            <!-- Hero (impact-first) -->
+            <div class="hero">
+                <p class="hero-label">Case Study</p>
+                <h1>In-Flow Capture</h1>
+                <p class="hero-sub">
+                    An AI workflow that turns ephemeral team chat — decisions, action items,
+                    ideas — into a typed, queryable knowledge base, without a context switch.
+                    The AI Companion pattern: capture conversation value before it evaporates.
+                </p>
+                <div class="meta-grid">
+                    <div class="meta-item"><b>Role</b><span>PM + Builder</span></div>
+                    <div class="meta-item"><b>Timeline</b><span>May 2026 — Ongoing</span></div>
+                    <div class="meta-item"><b>Phase 1</b><span>Shipped end-to-end</span></div>
+                    <div class="meta-item"><b>Evaluation</b><span>15-case set + locked rubric</span></div>
+                </div>
+                <div class="meta-grid" style="margin-top:16px;">
+                    <div class="meta-item" style="grid-column: 1/-1;">
+                        <b>Stack</b>
+                        <span>Python &nbsp;·&nbsp; Google Gemini &nbsp;·&nbsp; Notion API &nbsp;·&nbsp; Slack (Bolt / Socket Mode) &nbsp;·&nbsp; Hand-built eval harness</span>
+                    </div>
+                </div>
+
+                <!-- Impact band -->
+                <div class="impact-band">
+                    <div class="impact-band-label">Result — before → after a single prompt redesign</div>
+                    <div class="impact-band-headline">
+                        Pre-ship evaluation surfaced a systematic over-capture failure —
+                        a prompt that was 90% format and two words about restraint.
+                        A redesigned judgment layer, re-measured against the same rubric,
+                        resolved the dominant mode.
+                    </div>
+                    <div class="impact-stats">
+                        <div class="impact-stat">
+                            <span class="delta">3/15 → 13/15</span>
+                            <span class="desc">Clean-pass against a written precision rubric</span>
+                        </div>
+                        <div class="impact-stat">
+                            <span class="delta">3/3 → 0/3</span>
+                            <span class="desc">False captures on noise-only threads — eliminated</span>
+                        </div>
+                        <div class="impact-stat">
+                            <span class="delta">15/15</span>
+                            <span class="desc">Schema validity after fix (was 14/14, one transient API error)</span>
+                        </div>
+                        <div class="impact-stat">
+                            <span class="delta">~11s · ~2.8K</span>
+                            <span class="desc">p50 latency · tokens/capture (instrumented; UX risk → async mitigation specced)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 01 Demo -->
+            <section class="section" id="demo">
+                <p class="section-label">01 — Demo</p>
+                <h2>What it looks like in practice.</h2>
+                <p>One Slack command (<em>/capture</em>) on a thread → an LLM classifies the salient units, extracts per-type fields, and writes typed rows into a shared Notion database, with an in-thread reply linking the new records. No copy-paste, no context switch.</p>
+
+                <div class="media-frame">
+                    <div class="media-frame-label">Demo video</div>
+                    <div class="media-box">
+                        <div class="placeholder">
+                            Demo video coming soon
+                            <div class="ph-sub">/capture in Slack → typed records in Notion, end-to-end.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 02 Problem -->
+            <section class="section" id="problem">
+                <p class="section-label">02 — Problem</p>
+                <h2>Conversation is where work happens. Scrollback is where knowledge dies.</h2>
+                <p>The most valuable organizational knowledge — what we decided, why we rejected the alternative, who owns the follow-up, the spark of an idea — is created as a byproduct of conversation. Capturing it today demands a context switch nobody reliably does. The result is repeated debate, lost commitments, and an organization that has to keep relearning itself.</p>
+                <p>This is the AI Companion thesis, narrowed to one concrete loop: the message is the input adapter, the structured record is the output adapter — and the model in the middle decides what was worth keeping.</p>
+            </section>
+
+            <!-- 03 Thinking (mindmap slot) -->
+            <section class="section" id="thinking">
+                <p class="section-label">03 — Thinking</p>
+                <h2>The questions that had to be locked first.</h2>
+                <p>Before any code, five questions had to be answered: <em>what</em> to capture, <em>when</em>, <em>who</em> decides visibility, <em>what shape</em> the data takes on the way to retrieval, and <em>how</em> to know any of it works. Products like this fail when those questions are punted to the model — the resulting database becomes unusable within a week, and there is no honest way to tell.</p>
+
+                <div class="media-frame">
+                    <div class="media-frame-label">Mindmap — pre-build decomposition</div>
+                    <div class="media-box">
+                        <div class="placeholder">
+                            Mindmap
+                            <div class="ph-sub">Visual decomposition of the five questions, drawn by hand.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 04 PRD highlights -->
+            <section class="section" id="prd">
+                <p class="section-label">04 — PRD</p>
+                <h2>Four decisions that shaped the product.</h2>
+                <p>The PRD locks scope so the build is measurable. The four decisions below were the highest-leverage — every later judgment call falls out of these.</p>
+                <ul class="decision-list">
+                    <li>
+                        <span class="d-num">01</span>
+                        <span class="d-text">
+                            <strong>Manual, human-in-loop trigger.</strong>
+                            The capturer explicitly invokes <em>/capture</em> on a chosen thread. Capture <em>intent</em> is the highest-precision signal available; ambient/auto-capture is much harder to make trustworthy and is deferred to Future Work.
+                        </span>
+                    </li>
+                    <li>
+                        <span class="d-num">02</span>
+                        <span class="d-text">
+                            <strong>Hybrid visibility — shared by default, private by explicit flag.</strong>
+                            <em>/capture</em> → team KB; <em>/capture private</em> → private. The same human best placed to decide <em>whether</em> to capture is the one best placed to decide <em>who sees it</em> — solving the 1-1 vs. team-KB tension without building a permissions system.
+                        </span>
+                    </li>
+                    <li>
+                        <span class="d-num">03</span>
+                        <span class="d-text">
+                            <strong>Faithful distillation, not curated narrative.</strong>
+                            No pre-write edit step. "Delete" is the undo, not "edit." Letting users rewrite the AI's distillation reintroduces the manual-summary burden the product exists to remove — and invites revisionism. Quality is a model problem to measure and fix, not a UX gate.
+                        </span>
+                    </li>
+                    <li>
+                        <span class="d-num">04</span>
+                        <span class="d-text">
+                            <strong>A small, atomic taxonomy.</strong>
+                            Each captured unit is a <em>Decision</em>, an <em>Action</em>, or an <em>Idea</em>. A thread can produce many records, or zero. The Notion page-body template per type <em>is</em> the extraction contract: properties drive filterable views, body holds the rich content cells can't.
+                        </span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- 05 How it works -->
+            <section class="section" id="how">
+                <p class="section-label">05 — How it works</p>
+                <h2>Thin slice, on purpose.</h2>
+                <p>The pipeline is deliberately small: <strong>Slack <em>/capture</em> → one LLM call (classify + extract, structured JSON output) → Notion API write</strong>. One human action, one model decision, one structured artifact. Inside-out / egress-first build order — Notion was proven first, the Gemini call second, Slack last — so each layer was demoable before the next one existed.</p>
+
+                <div class="callout">
+                    <div class="callout-label">Honest scope</div>
+                    <p>Phase 2 — multi-agent extraction (CrewAI: classifier → extractor) and an MCP server wrapper exposing the capability to any MCP client — is <strong>deferred Future Work</strong>, not built. The single-call pipeline was chosen specifically so the core could be <em>evaluated</em> before the architecture got more interesting.</p>
+                </div>
+            </section>
+
+            <!-- 06 Evaluation -->
+            <section class="section" id="eval">
+                <p class="section-label">06 — Evaluation</p>
+                <h2>What "good" means — and how I measured it.</h2>
+                <p>For a feature whose entire value proposition is trust, accuracy <em>is</em> the product. Evaluation came before iteration — a way to measure capture quality that would not shift after seeing the output.</p>
+
+                <h3>The harness</h3>
+                <p>Fifteen hand-authored realistic threads, including private 1-1s, an urgent customer escalation, a long messy thread with a launch date that moves four times, and <em>three deliberate noise traps</em> where the correct answer is to capture nothing. For each thread, a written gold standard set <em>before</em> any model output, and a locked precision rubric of seven judgment calls (A–G) defining the boundary between capture and silence: vague reversible promises don't get captured, concrete owned directives do; the same 1-1 setting can produce both rulings.</p>
+
+                <h3>Baseline</h3>
+                <p>The dominant pattern was immediate: the model was over-eager — capturing polite acknowledgments, splitting one instruction into many records, and inventing tasks out of the losing side of a debate.</p>
+                <div class="stats-row">
+                    <div class="stat-box"><span class="num">3/15</span><span class="label">Clean-pass against the rubric (20%)</span></div>
+                    <div class="stat-box"><span class="num">0/3</span><span class="label">Noise-only threads correctly silent — failed all three</span></div>
+                    <div class="stat-box"><span class="num">~48%</span><span class="label">Of emitted records were noise or duplication</span></div>
+                </div>
+                <div class="kpi-grid">
+                    <div class="kpi-card"><div class="kpi-label">Latency p50</div><div class="kpi-val">10.8s</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Latency p95</div><div class="kpi-val">18.7s</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Tokens / capture (mean)</div><div class="kpi-val">~2,790</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Schema validity</div><div class="kpi-val">14/14 valid</div></div>
+                    <div class="kpi-card"><div class="kpi-label">API availability</div><div class="kpi-val">1 transient 503</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Model</div><div class="kpi-val">gemini-2.5-flash</div></div>
+                </div>
+
+                <h3>Diagnosis</h3>
+                <p>The original prompt was about <em>format</em>: the JSON shape, the field names, the schema. Its entire defense against noise was <em>"discard chatter"</em> and a parenthetical <em>"(or zero)"</em>. A capable model with no negative guidance defaults to capturing everything — it treats missing a record as a worse failure than emitting a noisy one.</p>
+                <p class="quote-block">Design principle: a gatekeeper has to know what to refuse — by name — and silence is often the right answer.</p>
+
+                <h3>The fix — judgment-first</h3>
+                <p>The judgment layer was rewritten in isolation — schema, model, and project rules unchanged — so the before / after delta is attributable to the prompt alone. The new prompt names the failure modes (vague reversible promises, polite acknowledgments, dependency follow-ups, task coordination, acknowledgments of a decision by the affected person, over-splitting) and states explicitly that returning zero records is a frequent, valid, and correct outcome.</p>
+                <div class="version-grid">
+                    <div class="version-card before">
+                        <h4>Before — judgment layer</h4>
+                        <p class="prompt-text">You distill team conversations into structured knowledge. Read the conversation and extract <em>every salient unit</em> as one of exactly these types: Decision, Action, Idea. <em>Discard chatter.</em> One conversation may yield multiple records <em>(or zero).</em> Be a faithful distiller — never invent facts or attribute something to a person who did not say it.</p>
+                    </div>
+                    <div class="version-card after">
+                        <h4>After — judgment layer (excerpt)</h4>
+                        <p class="prompt-text">You distill team conversations into structured knowledge — but you are a <em>conservative gatekeeper, not a collector</em>. A KB polluted with noise is worse than an empty one.
+
+<em>Returning zero records is a frequent, valid, and correct outcome.</em>
+
+Do NOT create a record for: polite/social messages; contextless link shares; vague or reversible promises (e.g. a manager musing about a future promotion); trivial scoping ("not this sprint"); dependency follow-ons; routine coordination/handoffs; acknowledgments of a decision by the affected person; restating or fragmenting one assignment into several records (a Decision and the distinct downstream task it triggers ARE two records — do not merge those).</p>
+                    </div>
+                </div>
+
+                <h3>After the fix</h3>
+                <div class="stats-row">
+                    <div class="stat-box"><span class="num">13/15</span><span class="label">Clean-pass against the rubric (87%) — up from 3/15</span></div>
+                    <div class="stat-box"><span class="num">3/3</span><span class="label">Noise-only threads correctly silent — up from 0/3</span></div>
+                    <div class="stat-box"><span class="num">15/15</span><span class="label">Schema validity</span></div>
+                </div>
+                <p>Nine threads flipped FAIL → PASS — including every catastrophic mode (false promotion logged as a task, fabricated Ideas from rejected positions, polite-acknowledgment captures, over-splits, distillation failures on a messy date-churn thread). Three threads were stable PASS. Two remain FAIL — the <em>same</em> narrower mode: over-splitting one decision into multiple records on the two most complex multi-part threads. The residual is documented openly rather than absorbed by tuning the prompt against those specific threads — which would amount to teaching to the test.</p>
+
+                <div class="callout">
+                    <div class="callout-label">Latency — integrity note</div>
+                    <p>Latency did not improve meaningfully. Overall p50 barely shifted (10.8s → 9.3s), and mean tokens per capture rose slightly because the new prompt is longer. The notable drops appeared only on noise threads — where the correct output was an empty response. The improvement is in precision, not speed. In-chat latency remains the real UX risk, addressed at the product layer with an async acknowledgment + queue (specced, not implemented).</p>
+                </div>
+            </section>
+
+            <!-- 07 What's next -->
+            <section class="section" id="next">
+                <p class="section-label">07 — What's next</p>
+                <h2>From thin slice to scaled product.</h2>
+                <div class="phases-grid">
+                    <div class="phase-card">
+                        <h4>Phase 2 — Pipeline</h4>
+                        <ul>
+                            <li>CrewAI: classifier → extractor</li>
+                            <li>MCP server wrapper</li>
+                            <li>capture_knowledge / list_projects / query_knowledge</li>
+                            <li>Per-utterance audit + A/B-testable prompts</li>
+                        </ul>
+                    </div>
+                    <div class="phase-card">
+                        <h4>Phase 3 — UX</h4>
+                        <ul>
+                            <li>Async acknowledgment + background queue</li>
+                            <li>Ephemeral "Capturing…" reaction</li>
+                            <li>Update message with link when done</li>
+                            <li>Removes in-chat latency as a blocker</li>
+                        </ul>
+                    </div>
+                    <div class="phase-card">
+                        <h4>Residual fix</h4>
+                        <ul>
+                            <li>Over-split mode on complex threads</li>
+                            <li>Tighten anti-split clause</li>
+                            <li>Re-evaluate vs. rubric (don't overcorrect into under-capture)</li>
+                            <li>Target: 15/15 without teaching to the test</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 08 Companion articles -->
+            <section class="section" id="artifacts">
+                <p class="section-label">08 — Companion articles</p>
+                <h2>The two long reads behind this.</h2>
+                <p>The PRD and the Evaluation Deep-Dive unpack the product thinking and the engineering rigor behind this case study.</p>
+
+                <div class="article-cards">
+                    <a href="./in-flow-capture-prd.html" class="article-card">
+                        <div class="article-card-label">Companion article</div>
+                        <h4>PRD — In-Flow Knowledge Capture</h4>
+                        <p class="article-card-desc">The product thesis, taxonomy, trigger model, visibility hybrid, extraction contract, and the locked review decisions that shaped v1.</p>
+                        <div class="article-card-inside">Inside: thesis · taxonomy · trigger model · hybrid visibility · extraction contract · metrics &amp; risks · roadmap</div>
+                        <span class="article-card-cta">Read the PRD →</span>
+                    </a>
+                    <a href="./in-flow-capture-eval.html" class="article-card">
+                        <div class="article-card-label">Companion article</div>
+                        <h4>Evaluation Deep-Dive</h4>
+                        <p class="article-card-desc">The harness, the precision rubric, the diagnosed over-capture pattern, the prompt redesign, and the per-thread before → after.</p>
+                        <div class="article-card-inside">Inside: harness · rubric (A–G) · baseline · diagnosis · prompt redesign · per-thread before → after · methodology</div>
+                        <span class="article-card-cta">Read the eval →</span>
+                    </a>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-item"><b>Email</b><span>chengruju01@gmail.com</span></div>
+            <div class="footer-item"><a href="https://www.instagram.com/salmonpinkrose/" target="_blank" style="color:#666;text-decoration:none;">Instagram ↗</a></div>
+            <div class="footer-item"><a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color:#666;text-decoration:none;">LinkedIn ↗</a></div>
+            <div class="footer-item"><b>Rights</b><span>Sonnet 5 by William Shakespeare</span></div>
+        </div>
+    </footer>
+
+    <script>
+        // Active TOC highlighting on scroll
+        const sections = document.querySelectorAll('.section[id]');
+        const tocLinks = document.querySelectorAll('.toc a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                if (window.scrollY >= section.offsetTop - 80) {
+                    current = section.getAttribute('id');
+                }
+            });
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

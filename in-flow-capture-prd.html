@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD — In-Flow Knowledge Capture</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=AR+One+Sans&family=Noto+Sans+HK&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F2F2F1;
+            --text-color: #000000;
+            --muted-color: #666666;
+            --font-main: "Special Elite", "Noto Sans HK", sans-serif;
+            --font-code: "AR One Sans", sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-main); -webkit-font-smoothing: antialiased; }
+        a { color: var(--text-color); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .top-bar { max-width: 1200px; margin: 0 auto; padding: 10px 24px 0; display: flex; justify-content: space-between; align-items: center; }
+        .back-link { font-size: 13px; font-family: var(--font-code); color: #999; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+        .back-link:hover { color: #333; text-decoration: none; }
+        .nav-links { display: flex; gap: 30px; font-size: 14px; font-family: var(--font-code); }
+        .nav-links a { color: #999; transition: all 0.2s ease; display: inline-block; transform-origin: bottom center; }
+        .nav-links a:hover { color: #333; text-decoration: none; }
+        .nav-links a:active { color: #ccc; transform: perspective(500px) rotateX(60deg) skewX(-15deg); }
+
+        .page { max-width: 1200px; margin: 0 auto; padding: 0 24px 80px; display: grid; grid-template-columns: 220px 1fr; gap: 60px; margin-top: 48px; }
+        .toc { position: sticky; top: 32px; height: fit-content; }
+        .toc-title { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; font-family: var(--font-code); margin-bottom: 16px; }
+        .toc a { display: block; font-size: 12px; font-family: var(--font-code); color: #aaa; padding: 5px 0; border-left: 2px solid transparent; padding-left: 12px; transition: all 0.2s; text-decoration: none; }
+        .toc a:hover { color: #333; border-left-color: #333; text-decoration: none; }
+        .toc a.active { color: #000; border-left-color: #000; }
+
+        .content { min-width: 0; }
+
+        .hero { margin-bottom: 56px; padding-bottom: 40px; border-bottom: 1px solid rgba(0,0,0,0.08); }
+        .hero-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; font-family: var(--font-code); margin-bottom: 16px; }
+        .hero h1 { font-size: 44px; font-family: var(--font-main); font-weight: bold; letter-spacing: -1px; margin: 0 0 16px; line-height: 1.15; }
+        .hero-sub { font-size: 16px; line-height: 1.8; color: #555; font-family: var(--font-main); max-width: 620px; margin-bottom: 36px; }
+        .meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 32px; border-top: 1px solid rgba(0,0,0,0.08); }
+        .meta-item b { display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #aaa; font-family: var(--font-code); margin-bottom: 6px; font-weight: 500; }
+        .meta-item span { font-size: 13px; font-family: var(--font-main); color: #333; }
+
+        .section { margin-bottom: 64px; scroll-margin-top: 32px; }
+        .section-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; font-family: var(--font-code); margin-bottom: 8px; }
+        .section h2 { font-size: 26px; font-family: var(--font-main); font-weight: bold; letter-spacing: -0.5px; margin: 0 0 20px; line-height: 1.3; }
+        .section h3 { font-size: 17px; font-family: var(--font-main); font-weight: bold; letter-spacing: -0.2px; margin: 28px 0 10px; }
+        .section p { font-size: 14px; line-height: 1.9; color: #444; font-family: var(--font-main); margin: 0 0 14px; max-width: 680px; }
+        .section p:last-child { margin-bottom: 0; }
+
+        .decision-list { list-style: none; padding: 0; margin: 20px 0; }
+        .decision-list li { padding: 18px 0; border-bottom: 1px solid rgba(0,0,0,0.06); display: grid; grid-template-columns: 32px 1fr; gap: 16px; }
+        .decision-list li .d-num { font-size: 11px; font-family: var(--font-code); color: #aaa; padding-top: 3px; }
+        .decision-list li .d-text { font-size: 14px; font-family: var(--font-main); line-height: 1.8; color: #444; }
+        .decision-list li .d-text strong { display: block; color: #000; margin-bottom: 4px; }
+
+        .req-card { padding: 16px 20px; border-left: 3px solid #000; background: rgba(0,0,0,0.025); margin: 16px 0; }
+        .req-card .req-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; font-family: var(--font-code); margin-bottom: 6px; }
+        .req-card p { font-size: 13px; color: #333; margin: 0; line-height: 1.8; }
+
+        .callout { margin: 24px 0; padding: 18px 22px; border: 1px dashed #ccc; border-radius: 2px; background: rgba(0,0,0,0.015); }
+        .callout-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; font-family: var(--font-code); margin-bottom: 8px; }
+        .callout p { margin: 0; font-size: 13px; line-height: 1.7; color: #444; }
+
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 24px 0; }
+        .comp-table th { text-align: left; padding: 10px 14px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-family: var(--font-code); color: #aaa; border-bottom: 1px solid rgba(0,0,0,0.08); font-weight: 500; }
+        .comp-table td { padding: 12px 14px; font-family: var(--font-main); font-size: 13px; color: #444; border-bottom: 1px solid rgba(0,0,0,0.05); vertical-align: top; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
+        .kpi-card { padding: 18px; background: rgba(0,0,0,0.03); border-radius: 2px; }
+        .kpi-card .kpi-label { font-size: 11px; font-family: var(--font-code); color: #aaa; margin-bottom: 6px; }
+        .kpi-card .kpi-val { font-size: 17px; font-family: var(--font-main); font-weight: bold; }
+
+        .phases-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+        .phase-card { padding: 22px; border: 1px solid rgba(0,0,0,0.08); border-radius: 2px; }
+        .phase-card h4 { font-size: 12px; font-family: var(--font-code); text-transform: uppercase; letter-spacing: 1px; color: #aaa; margin: 0 0 14px; font-weight: 500; }
+        .phase-card ul { list-style: none; padding: 0; margin: 0; }
+        .phase-card ul li { font-size: 13px; font-family: var(--font-main); color: #444; padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,0.04); line-height: 1.6; }
+        .phase-card ul li:last-child { border-bottom: none; }
+
+        footer { border-top: 1px solid rgba(0,0,0,0.08); margin-top: 24px; }
+        .footer-inner { max-width: 1200px; margin: 0 auto; padding: 18px 24px 28px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; font-size: 13px; color: #666; font-family: var(--font-code); }
+        .footer-item b { display: block; font-weight: 500; margin-bottom: 6px; color: #666; }
+
+        @media (max-width: 900px) {
+            .page { grid-template-columns: 1fr; }
+            .toc { display: none; }
+            .meta-grid { grid-template-columns: 1fr 1fr; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            .phases-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 32px; }
+            .meta-grid { grid-template-columns: 1fr 1fr; }
+            .kpi-grid { grid-template-columns: 1fr; }
+            .footer-inner { grid-template-columns: 1fr 1fr; row-gap: 16px; font-size: 12px; }
+        }
+        @media (max-width: 480px) {
+            .nav-links { gap: 20px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="./in-flow-capture.html" class="back-link">← In-Flow Capture</a>
+        <nav class="nav-links">
+            <a href="./index.html">Sketchbook</a>
+            <a href="./works.html">Works</a>
+            <a href="./experience.html">Experience</a>
+            <a href="./about.html">About</a>
+        </nav>
+    </div>
+
+    <div class="page">
+
+        <aside class="toc">
+            <div class="toc-title">PRD Contents</div>
+            <a href="#problem">01 — Problem &amp; Opportunity</a>
+            <a href="#scope">02 — Target user &amp; scope</a>
+            <a href="#goals">03 — Goals &amp; non-goals</a>
+            <a href="#trigger">04 — Capture trigger</a>
+            <a href="#visibility">05 — Visibility model</a>
+            <a href="#taxonomy">06 — Taxonomy &amp; contract</a>
+            <a href="#notion">07 — Notion knowledge model</a>
+            <a href="#flow">08 — User flow</a>
+            <a href="#metrics">09 — Success metrics</a>
+            <a href="#risks">10 — Risks &amp; mitigations</a>
+            <a href="#roadmap">11 — Roadmap &amp; future work</a>
+            <a href="#team">12 — Team &amp; delivery</a>
+        </aside>
+
+        <main class="content">
+
+            <div class="hero">
+                <p class="hero-label">Companion article · PRD</p>
+                <h1>PRD — In-Flow Knowledge Capture</h1>
+                <p class="hero-sub">
+                    Product requirements for an AI workflow that turns ephemeral team chat
+                    into a typed, queryable knowledge base — the v1 locked spec behind the
+                    <a href="./in-flow-capture.html" style="color:#000;border-bottom:1px solid #000;">case study</a>.
+                </p>
+                <div class="meta-grid">
+                    <div class="meta-item"><b>Document</b><span>PRD v1 (locked)</span></div>
+                    <div class="meta-item"><b>Authored</b><span>May 2026</span></div>
+                    <div class="meta-item"><b>Status</b><span>Built end-to-end</span></div>
+                    <div class="meta-item"><b>Companion to</b><span><a href="./in-flow-capture.html" style="color:#000;">Case study →</a></span></div>
+                </div>
+            </div>
+
+            <!-- 01 Problem -->
+            <section class="section" id="problem">
+                <p class="section-label">01 — Problem &amp; opportunity</p>
+                <h2>Conversation creates knowledge. Scrollback destroys it.</h2>
+                <p>Valuable organizational knowledge — decisions, the reasoning behind them, commitments, sparks of ideas — is created as a byproduct of team conversation (Slack, Zoom Team Chat) and lost to scrollback. Capturing it today requires a context-switch nobody reliably does. The result is fragmented memory, repeated debates, and lost accountability.</p>
+                <p>The opportunity is to capture that knowledge <em>in the flow</em> of the conversation that already happened, with near-zero friction, as typed retrievable records.</p>
+            </section>
+
+            <!-- 02 Scope -->
+            <section class="section" id="scope">
+                <p class="section-label">02 — Target user &amp; scope</p>
+                <h2>Narrow persona, broad beneficiary.</h2>
+                <p><strong>Primary persona:</strong> a PM or IC working in team chat who wants a thread's decisions, action items, or ideas preserved without leaving the conversation.</p>
+                <p><strong>Broader beneficiaries:</strong> anyone on a project team — IC, design, PM. The persona is kept narrow for focus; the product serves the team.</p>
+                <p><strong>Privacy reality:</strong> some captured content is sensitive (1-1s especially). Notion was chosen because it is collaborative — so shared-vs-private is a real conflict, resolved at the trigger point (see §05).</p>
+            </section>
+
+            <!-- 03 Goals -->
+            <section class="section" id="goals">
+                <p class="section-label">03 — Goals &amp; non-goals</p>
+                <h2>What v1 commits to — and what it does not.</h2>
+                <table class="comp-table">
+                    <thead><tr><th>Goals (v1)</th><th>Non-goals (v1)</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>Zero-context-switch capture</td>
+                            <td>Automatic / ambient capture</td>
+                        </tr>
+                        <tr>
+                            <td>Deterministic typed output</td>
+                            <td>Raw transcript archival</td>
+                        </tr>
+                        <tr>
+                            <td>Retrievable via filtered views</td>
+                            <td>Analytics over the KB</td>
+                        </tr>
+                        <tr>
+                            <td>Trustworthy — user controls what is captured and who sees it</td>
+                            <td>Multi-workspace; full RBAC modeling</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size:12px;color:#888;font-family:var(--font-code);">Capture-time visibility (§05) is in-scope and deliberately not a permissions system.</p>
+            </section>
+
+            <!-- 04 Trigger -->
+            <section class="section" id="trigger">
+                <p class="section-label">04 — Capture trigger model</p>
+                <h2>Manual, human-in-loop.</h2>
+                <p>v1 capture is invoked explicitly — <em>/capture</em> or a message action on a chosen thread.</p>
+                <p><strong>Rationale:</strong> capture <em>intent</em> is the highest-precision signal available. Manual triggering is lower cost, higher control, and builds trust before any automation. The decision draws on a previously-shipped MVP pattern: ship one controllable slice, earn trust, then expand. Auto-capture is deferred to Future Work (§11).</p>
+            </section>
+
+            <!-- 05 Visibility -->
+            <section class="section" id="visibility">
+                <p class="section-label">05 — Visibility model</p>
+                <h2>Hybrid: shared by default, private by explicit flag.</h2>
+                <p>Visibility is decided at capture time, by the same human deciding whether to capture at all.</p>
+                <ul class="decision-list">
+                    <li><span class="d-num">/c</span><span class="d-text"><strong>/capture</strong> → Team KB (shared, default)</span></li>
+                    <li><span class="d-num">/c·p</span><span class="d-text"><strong>/capture private</strong> → Private (visible only to the capturer)</span></li>
+                </ul>
+                <p>This solves the 1-1-vs-team-KB tension without building a permissions system. The human best placed to decide <em>whether</em> to capture is the one best placed to decide <em>who sees it</em>.</p>
+                <p><strong>v1 implementation (honestly scoped):</strong> one Knowledge Capture DB + a Visibility property (Team / Private) + view-level separation (Team views exclude Private). True enforcement (per-user private spaces + Notion ACLs) is production hardening, listed as Future Work. v1 demonstrates the <em>decision point and routing logic</em>, not enforced ACLs — stated plainly.</p>
+                <div class="req-card">
+                    <div class="req-label">Requirement — ephemeral confirmation for private captures</div>
+                    <p>A <em>/capture private</em> invocation in a shared channel must reply via Slack's <em>ephemeral message</em> (visible only to the capturer). A public in-thread confirmation of a private note would leak its existence to the channel — defeating the privacy intent.</p>
+                </div>
+            </section>
+
+            <!-- 06 Taxonomy -->
+            <section class="section" id="taxonomy">
+                <p class="section-label">06 — Extraction taxonomy &amp; contract</p>
+                <h2>Three atomic types. One contract.</h2>
+                <p>Each salient unit of a captured thread is classified into one of three atomic types — <strong>Decision</strong>, <strong>Action</strong>, or <strong>Idea</strong> — and its fields are extracted. One thread can yield multiple records, or zero.</p>
+                <p><strong>Design principle:</strong> faithful distillation, not curated narrative. The capture is an AI distillation of what was actually said. No pre-write edit step (see §08). Capture authenticity outranks user polish.</p>
+                <h3>Per-type body templates (the extraction contract)</h3>
+                <table class="comp-table">
+                    <thead><tr><th>Type</th><th>Type-specific properties</th><th>Page-body template</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Decision</strong></td><td>—</td><td>Decision · Rationale · Rejected alternative · Implications</td></tr>
+                        <tr><td><strong>Action</strong></td><td>Owner · Due</td><td>Context (why this action)</td></tr>
+                        <tr><td><strong>Idea</strong></td><td>—</td><td>Idea · Trigger/context · Potential value · Next step</td></tr>
+                    </tbody>
+                </table>
+                <p>Shared properties across all types: Name, Type, Date, Participants, Project, Source, Status, Visibility.</p>
+                <p><strong>Output contract:</strong> the LLM returns deterministic JSON — a list of records, each with type, name, shared fields, visibility, body_fields, and source_excerpts. No prose outside JSON.</p>
+                <div class="req-card">
+                    <div class="req-label">Requirement — source audit trail (anti-hallucination)</div>
+                    <p>Each record must include source_excerpts — the verbatim message snippet(s) the extraction was derived from. The Notion page appends these in a collapsed audit-toggle at the bottom. This preserves the no-edit / faithful-distillation rule while giving the team an unedited trail to verify against if the AI misattributes or distorts. Trust safeguard, not an edit path.</p>
+                </div>
+            </section>
+
+            <!-- 07 Notion -->
+            <section class="section" id="notion">
+                <p class="section-label">07 — Notion knowledge model</p>
+                <h2>One database. Many cuts.</h2>
+                <p>A single Notion database — <em>Knowledge Capture</em> — backs all records. Views (Notion UI; the API cannot create them) replace what a folder structure would have done:</p>
+                <ul class="decision-list">
+                    <li><span class="d-num">A</span><span class="d-text">Decisions log — Type = Decision, Visibility ≠ Private</span></li>
+                    <li><span class="d-num">B</span><span class="d-text">Open actions — Type = Action, Status = Open, Visibility ≠ Private</span></li>
+                    <li><span class="d-num">C</span><span class="d-text">Ideas — Type = Idea, Visibility ≠ Private</span></li>
+                    <li><span class="d-num">D</span><span class="d-text">By project — grouped by Project</span></li>
+                    <li><span class="d-num">E</span><span class="d-text">My private — Visibility = Private</span></li>
+                </ul>
+                <p><strong>Field choices for v1:</strong> Project = select (relation later); Status = shared <em>Open / Done / Parked</em> (per-type nuance lives in the body).</p>
+                <div class="req-card">
+                    <div class="req-label">Requirement — Project normalization (v1, not deferred)</div>
+                    <p>Before writing, the pipeline fetches the DB's existing Project select options and passes them to the extraction step. The model must snap an extracted project to a semantically-matching existing option; only if genuinely new, create it; if ambiguous, tag <em>Unassigned-Review</em>. Unconstrained auto-create pollutes the DB fast (<em>Project Apollo</em> / <em>apollo-project</em> / <em>Project-Apollo</em>) and breaks the "By project" view. Cheap to add at v1; prevents day-1 rot.</p>
+                </div>
+            </section>
+
+            <!-- 08 Flow -->
+            <section class="section" id="flow">
+                <p class="section-label">08 — User flow (v1)</p>
+                <h2>Four steps. No edit gate.</h2>
+                <ol style="padding-left:20px; line-height:2; font-family:var(--font-main); color:#444; font-size:14px;">
+                    <li>Conversation happens in Slack.</li>
+                    <li>User invokes <em>/capture</em> (Team) or <em>/capture private</em> on a thread.</li>
+                    <li>Pipeline: thread text → classify → extract per-type fields → write typed row(s) with Visibility.</li>
+                    <li>Bot replies with link(s) to the created record(s) — ephemeral if private (§05), normal if Team.</li>
+                </ol>
+                <p><strong>No pre-write edit step.</strong> Allowing edits reintroduces the manual-summary burden the product exists to remove and invites revisionism — what one wishes the thread had said versus what was actually discussed. Delete is the undo, not edit. Low quality is a model problem to measure and fix (§09), not a UX gate.</p>
+            </section>
+
+            <!-- 09 Metrics -->
+            <section class="section" id="metrics">
+                <p class="section-label">09 — Success metrics</p>
+                <h2>Provisional targets, anchored three ways.</h2>
+                <p>Numerical targets are hypotheses to validate, not arbitrary, anchored:</p>
+                <ol style="padding-left:20px; line-height:1.9; font-family:var(--font-main); color:#444; font-size:14px;">
+                    <li><strong>vs. baseline</strong> — status quo (manual capture) ≈ 0% effective. The bar is decisively better than the lossy baseline, not perfection.</li>
+                    <li><strong>by cost-of-error, per type</strong> — a wrong Idea is cheap (delete); a wrong Decision can mislead the team. Precision is weighted per type by error cost, not a single global number.</li>
+                    <li><strong>provisional → measured</strong> — the evaluation is the finding: measured number + diagnosed error pattern + the prompt fix. See the <a href="./in-flow-capture-eval.html" style="color:#000;border-bottom:1px solid #000;">evaluation deep-dive</a>.</li>
+                </ol>
+                <div class="kpi-grid">
+                    <div class="kpi-card"><div class="kpi-label">Capture precision</div><div class="kpi-val">90% (provisional)</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Capture usefulness</div><div class="kpi-val">80% (provisional)</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Classification accuracy</div><div class="kpi-val">90% (Action↔Decision boundary watched)</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Latency p50 / p95</div><div class="kpi-val">tolerable in-chat (else async)</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Time-to-Acknowledge</div><div class="kpi-val">fast — &lt; ack-before-failure</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Cost</div><div class="kpi-val">tokens/capture; $/100 captures</div></div>
+                </div>
+                <div class="req-card">
+                    <div class="req-label">Constraint — payload cap (cost + abuse guardrail)</div>
+                    <p>A single <em>/capture</em> must not ingest an unbounded thread (a 400-message thread spikes cost exponentially). v1 truncates to a bounded recent window (message-count or token budget). The constraint is the requirement; the specific limit is a tuned hypothesis.</p>
+                </div>
+            </section>
+
+            <!-- 10 Risks -->
+            <section class="section" id="risks">
+                <p class="section-label">10 — Risks &amp; mitigations</p>
+                <h2>Surfaced openly, not hidden in an appendix.</h2>
+                <table class="comp-table">
+                    <thead><tr><th>Risk</th><th>Mitigation</th></tr></thead>
+                    <tbody>
+                        <tr><td>Private content into shared KB</td><td>Capture-time Visibility flag (§05); human decides</td></tr>
+                        <tr><td>v1 visibility not ACL-enforced</td><td>Stated openly; production hardening listed as Future Work</td></tr>
+                        <tr><td>Misclassification / hallucination erodes trust</td><td>In-thread link · easy delete · measured accuracy · source-excerpt audit trail (§06)</td></tr>
+                        <tr><td>Private capture leaks via public confirmation</td><td>Ephemeral reply for <em>/capture private</em> (§05)</td></tr>
+                        <tr><td>LLM cost at scale / thread-size abuse</td><td>Manual trigger bounds volume · payload cap (§09)</td></tr>
+                        <tr><td>Noise / low value records</td><td>Distill, never archive raw transcript · written precision rubric · measured baseline + fix</td></tr>
+                        <tr><td>Project value drift (DB pollution)</td><td>v1 normalization requirement (§07): snap to existing option or flag <em>Unassigned-Review</em></td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 11 Roadmap -->
+            <section class="section" id="roadmap">
+                <p class="section-label">11 — Roadmap &amp; future work</p>
+                <h2>Built today. Shipping next. Deferred openly.</h2>
+                <div class="phases-grid">
+                    <div class="phase-card">
+                        <h4>Phase 2 — Committed</h4>
+                        <ul>
+                            <li>Multi-agent classify→extract (CrewAI: classifier agent → extractor agent)</li>
+                            <li>MCP server wrapper exposing the capability as MCP tools (<em>capture_knowledge</em> · <em>list_projects</em> · <em>query_knowledge</em>) callable by any MCP client</li>
+                            <li>Wrapper, not rewrite — sequenced after the working core</li>
+                            <li>Honestly scoped: not built yet at the time of this document</li>
+                        </ul>
+                    </div>
+                    <div class="phase-card">
+                        <h4>Future Work — Post-v1</h4>
+                        <ul>
+                            <li>Enforced private spaces + Notion ACLs</li>
+                            <li>Auto-suggest capture (replaces manual trigger)</li>
+                            <li>1:1 container type linking child records</li>
+                            <li>Project as relation + Projects DB</li>
+                            <li>Analytics over the KB</li>
+                            <li>Native Zoom Team Chat action</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="callout">
+                    <div class="callout-label">Why MCP, honestly</div>
+                    <p>The MCP server wrapper mirrors the integration primitive shipped between Zoom and Anthropic in ~April 2026 — meeting decisions becoming actions in external systems. v1 ships direct-API; the Phase 2 wrapper publishes the same capability as the complementary egress direction. The framing is "I implemented the primitive," not "we already use MCP."</p>
+                </div>
+            </section>
+
+            <!-- 12 Team -->
+            <section class="section" id="team">
+                <p class="section-label">12 — Team &amp; delivery</p>
+                <h2>An AI-augmented operating model.</h2>
+                <p>Solo PM directing AI execution agents — a deliberate AI-augmented delivery model, not a staffing gap. The model itself is part of the AI-PM fluency on display.</p>
+                <table class="comp-table">
+                    <thead><tr><th>Function</th><th>Accountable</th><th>Executed by</th></tr></thead>
+                    <tbody>
+                        <tr><td>Product / PM — spec, scope, judgment, eval design</td><td>Catherine</td><td>Catherine</td></tr>
+                        <tr><td>Design — capture UX + Notion IA (light; no custom UI)</td><td>Catherine</td><td>Claude (design reasoning)</td></tr>
+                        <tr><td>Engineering / Build — pipeline, LLM + Notion integration</td><td>Catherine</td><td>Claude Code</td></tr>
+                        <tr><td>Code Review</td><td>Catherine</td><td>AI review pass + PM spot-check</td></tr>
+                        <tr><td>QA / Evaluation</td><td>Catherine</td><td>Eval scripts + PM judgment</td></tr>
+                    </tbody>
+                </table>
+                <p style="font-size:12px;color:#888;font-family:var(--font-code);">Estimated delivery: Phase 1 core ~8–10h · Phase 2 multi-agent + MCP wrapper ~12–16h · Phase 3 eval ~6h · Phase 4 PM artifacts ~6–10h. Total ≈ 32–42h.</p>
+                <p>No frontend workstream — meeting users in Slack with no new UI is a deliberate product decision (lower adoption friction), not an omitted role.</p>
+            </section>
+
+            <p style="font-size:12px;color:#aaa;font-family:var(--font-code);text-align:center;margin-top:48px;">
+                <a href="./in-flow-capture.html" style="color:#666;">← Back to the case study</a> &nbsp;·&nbsp;
+                <a href="./in-flow-capture-eval.html" style="color:#666;">Read the Evaluation Deep-Dive →</a>
+            </p>
+
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-item"><b>Email</b><span>chengruju01@gmail.com</span></div>
+            <div class="footer-item"><a href="https://www.instagram.com/salmonpinkrose/" target="_blank" style="color:#666;text-decoration:none;">Instagram ↗</a></div>
+            <div class="footer-item"><a href="https://www.linkedin.com/in/chengru-ju-" target="_blank" style="color:#666;text-decoration:none;">LinkedIn ↗</a></div>
+            <div class="footer-item"><b>Rights</b><span>Sonnet 5 by William Shakespeare</span></div>
+        </div>
+    </footer>
+
+    <script>
+        const sections = document.querySelectorAll('.section[id]');
+        const tocLinks = document.querySelectorAll('.toc a');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                if (window.scrollY >= section.offsetTop - 80) current = section.getAttribute('id');
+            });
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
